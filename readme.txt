@@ -1,5 +1,5 @@
 === WP Secrets Manager ===
-Contributors: displacefoundry
+Contributors: ericmann
 Tags: secrets, encryption, security, api-keys, credentials
 Requires at least: 6.9
 Tested up to: 6.9

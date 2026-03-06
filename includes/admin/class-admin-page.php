@@ -110,7 +110,7 @@ class WP_Secrets_Admin_Page {
 				</table>
 			<?php else : ?>
 				<div class="notice notice-error">
-					<p><?php esc_html_e( 'No secrets provider is active. The sodium PHP extension may not be available.', 'wp-secrets-manager' ); ?></p>
+					<p><?php esc_html_e( 'No secrets provider is active. Sodium functions may not be available.', 'wp-secrets-manager' ); ?></p>
 				</div>
 			<?php endif; ?>
 

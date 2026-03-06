@@ -64,7 +64,7 @@ class WP_Secrets_Health_Check {
 				),
 				'description' => sprintf(
 					'<p>%s</p>',
-					__( 'WP Secrets Manager has no active provider. Secrets cannot be stored or retrieved. The sodium PHP extension may not be available.', 'wp-secrets-manager' )
+					__( 'WP Secrets Manager has no active provider. Secrets cannot be stored or retrieved. Sodium functions may not be available.', 'wp-secrets-manager' )
 				),
 				'actions'     => '',
 				'test'        => 'wp_secrets_provider',

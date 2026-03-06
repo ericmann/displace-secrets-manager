@@ -5,8 +5,8 @@
 	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
-			"name": "Displace Foundry",
-			"email": "foundry@displace.tech"
+			"name": "Eric Mann",
+			"email": "eric@eamann.com"
 		}
 	],
 	"require": {

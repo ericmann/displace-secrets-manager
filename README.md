@@ -286,10 +286,10 @@ Debug information (key source, master key status, provider details) is available
 
 ## Requirements
 
-- PHP 7.2+ (sodium extension required; ships with PHP 7.2+)
+- PHP 7.2+ (uses libsodium via PHP's native extension or WordPress's sodium_compat)
 - WordPress 6.9+
 - WP-CLI 2.8+ (for CLI commands)
 
 ## License
 
-GPL-2.0-or-later
+Copyright (c) 2026 Eric Mann. Licensed under GPL-2.0-or-later.

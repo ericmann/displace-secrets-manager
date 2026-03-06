@@ -183,7 +183,7 @@ class Provider_Encrypted_Options implements WP_Secrets_Provider {
 		if ( ! function_exists( 'sodium_crypto_secretbox' ) ) {
 			return array(
 				'status'  => 'critical',
-				'message' => __( 'The sodium PHP extension is not available. Secrets cannot be encrypted.', 'wp-secrets-manager' ),
+				'message' => __( 'Sodium functions are not available. Secrets cannot be encrypted.', 'wp-secrets-manager' ),
 			);
 		}
 

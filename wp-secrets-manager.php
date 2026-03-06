@@ -1,16 +1,18 @@
 <?php
 /**
  * Plugin Name: WP Secrets Manager
- * Plugin URI:  https://github.com/DisplaceFoundry/wp-secrets-manager
+ * Plugin URI:  https://github.com/ericmann/wp-secrets-manager
  * Description: A standardized secrets management API for WordPress. Provides get_secret() and set_secret() with automatic encryption and a pluggable provider interface for external backends.
  * Version:     0.1.0
- * Author:      Displace Foundry
- * Author URI:  https://displacefoundry.com
+ * Author:      Eric Mann
+ * Author URI:  https://eamann.com
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-secrets-manager
  * Requires at least: 6.9
  * Requires PHP: 7.2
+ *
+ * Copyright (c) 2026 Eric Mann
  *
  * @package WP_Secrets_Manager
  */
