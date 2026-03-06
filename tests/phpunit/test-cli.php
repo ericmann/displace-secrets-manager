@@ -36,8 +36,8 @@ class Test_CLI extends WP_UnitTestCase {
 	/**
 	 * Set up each test.
 	 */
-	public function setUp(): void {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 
 		WP_Secrets_Manager::reset();
 
@@ -52,7 +52,7 @@ class Test_CLI extends WP_UnitTestCase {
 	/**
 	 * Tear down each test.
 	 */
-	public function tearDown(): void {
+	public function tear_down() {
 		foreach ( $this->created_keys as $key ) {
 			delete_option( Provider_Encrypted_Options::option_name( $key ) );
 		}
@@ -63,7 +63,7 @@ class Test_CLI extends WP_UnitTestCase {
 
 		WP_Secrets_Manager::reset();
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**

@@ -29,8 +29,8 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	/**
 	 * Set up each test.
 	 */
-	public function setUp(): void {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 
 		$this->provider = new Provider_Encrypted_Options();
 		$this->provider->reset_cache();
@@ -41,7 +41,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	/**
 	 * Tear down each test.
 	 */
-	public function tearDown(): void {
+	public function tear_down() {
 		foreach ( $this->created_keys as $key ) {
 			delete_option( Provider_Encrypted_Options::option_name( $key ) );
 		}
@@ -50,7 +50,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 
 		$this->created_keys = array();
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**

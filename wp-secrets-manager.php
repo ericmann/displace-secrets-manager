@@ -9,8 +9,8 @@
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-secrets-manager
- * Requires at least: 6.4
- * Requires PHP: 7.4
+ * Requires at least: 6.9
+ * Requires PHP: 7.2
  *
  * @package WP_Secrets_Manager
  */

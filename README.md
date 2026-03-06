@@ -286,8 +286,8 @@ Debug information (key source, master key status, provider details) is available
 
 ## Requirements
 
-- PHP 7.4+ (sodium extension required; ships with PHP 7.2+)
-- WordPress 6.4+ (for `Requires Plugins` header support)
+- PHP 7.2+ (sodium extension required; ships with PHP 7.2+)
+- WordPress 6.9+
 - WP-CLI 2.8+ (for CLI commands)
 
 ## License

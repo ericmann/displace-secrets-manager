@@ -18,8 +18,8 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	/**
 	 * Set up each test.
 	 */
-	public function setUp(): void {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 
 		$this->provider = new Provider_Encrypted_Options();
 		$this->provider->reset_cache();
@@ -30,10 +30,10 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	/**
 	 * Tear down each test.
 	 */
-	public function tearDown(): void {
+	public function tear_down() {
 		$this->clean_secrets_options();
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**

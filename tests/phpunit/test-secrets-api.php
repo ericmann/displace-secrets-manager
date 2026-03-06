@@ -35,8 +35,8 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	/**
 	 * Set up a fresh manager instance before every test.
 	 */
-	public function setUp(): void {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 
 		WP_Secrets_Manager::reset();
 
@@ -48,7 +48,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up secrets and filters after every test.
 	 */
-	public function tearDown(): void {
+	public function tear_down() {
 		foreach ( $this->test_keys as $key ) {
 			$option = Provider_Encrypted_Options::option_name( $key );
 			delete_option( $option );
@@ -63,7 +63,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 
 		WP_Secrets_Manager::reset();
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**
