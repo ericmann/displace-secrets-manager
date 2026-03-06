@@ -3,13 +3,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Tests for WP-CLI command logic via WP_Secrets_Manager.
+ * Tests for WP-CLI command logic via Secrets_Manager.
  *
  * Since WP-CLI cannot be invoked directly in unit tests, these tests
  * exercise the underlying manager methods with the same context that
  * the CLI commands construct (is_cli = true, global flag, etc.).
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  * @group   cli
  */
 
@@ -18,14 +18,14 @@ class Test_CLI extends WP_UnitTestCase {
 	/**
 	 * Manager instance.
 	 *
-	 * @var WP_Secrets_Manager
+	 * @var Secrets_Manager
 	 */
 	private $manager;
 
 	/**
 	 * Provider instance.
 	 *
-	 * @var WP_Secrets_Provider_Encrypted_Options
+	 * @var Secrets_Provider_Encrypted_Options
 	 */
 	private $provider;
 
@@ -42,12 +42,12 @@ class Test_CLI extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
-		WP_Secrets_Manager::reset();
+		Secrets_Manager::reset();
 
-		$this->provider = new WP_Secrets_Provider_Encrypted_Options();
+		$this->provider = new Secrets_Provider_Encrypted_Options();
 		$this->provider->reset_cache();
 
-		$this->manager = WP_Secrets_Manager::get_instance();
+		$this->manager = Secrets_Manager::get_instance();
 		$this->manager->register_provider( $this->provider );
 		$this->manager->select_provider();
 	}
@@ -57,14 +57,14 @@ class Test_CLI extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		foreach ( $this->created_keys as $key ) {
-			delete_option( WP_Secrets_Provider_Encrypted_Options::option_name( $key ) );
+			delete_option( Secrets_Provider_Encrypted_Options::option_name( $key ) );
 		}
 
-		delete_option( WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION );
+		delete_option( Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION );
 
 		$this->created_keys = array();
 
-		WP_Secrets_Manager::reset();
+		Secrets_Manager::reset();
 
 		parent::tear_down();
 	}
@@ -89,7 +89,7 @@ class Test_CLI extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Manager::set
+	 * @covers Secrets_Manager::set
 	 */
 	public function test_set_via_manager_stores_secret() {
 		$key   = 'cli-test/api_key';
@@ -103,7 +103,7 @@ class Test_CLI extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Manager::get
+	 * @covers Secrets_Manager::get
 	 */
 	public function test_get_via_manager_retrieves_secret() {
 		$key   = 'cli-test/retrieve_key';
@@ -118,7 +118,7 @@ class Test_CLI extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Manager::delete
+	 * @covers Secrets_Manager::delete
 	 */
 	public function test_delete_via_manager_removes_secret() {
 		$key   = 'cli-test/delete_key';
@@ -134,7 +134,7 @@ class Test_CLI extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Manager::list_keys
+	 * @covers Secrets_Manager::list_keys
 	 */
 	public function test_list_keys_via_manager() {
 		$keys = array(
@@ -157,7 +157,7 @@ class Test_CLI extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Manager::exists
+	 * @covers Secrets_Manager::exists
 	 */
 	public function test_exists_returns_true_for_stored() {
 		$key = 'cli-test/exists_key';
@@ -168,7 +168,7 @@ class Test_CLI extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Manager::exists
+	 * @covers Secrets_Manager::exists
 	 */
 	public function test_exists_returns_false_for_missing() {
 		$this->assertFalse(
@@ -177,8 +177,8 @@ class Test_CLI extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Manager::set
-	 * @covers WP_Secrets_Manager::get
+	 * @covers Secrets_Manager::set
+	 * @covers Secrets_Manager::get
 	 */
 	public function test_global_key_via_manager() {
 		$key     = 'infrastructure_master';
@@ -197,8 +197,8 @@ class Test_CLI extends WP_UnitTestCase {
 	 * CLI context (is_cli = true) should bypass namespace restrictions,
 	 * allowing read access to secrets set by another plugin.
 	 *
-	 * @covers WP_Secrets_Manager::get
-	 * @covers WP_Secrets_Context::can_access_namespace
+	 * @covers Secrets_Manager::get
+	 * @covers Secrets_Context::can_access_namespace
 	 */
 	public function test_cli_bypasses_namespace_restriction() {
 		$key   = 'plugin-a/private_token';

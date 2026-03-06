@@ -1,8 +1,8 @@
 <?php
 /**
- * WP Secrets Exception
+ * Secrets Exception
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Extends RuntimeException so callers can catch either this specific
  * type or the broader RuntimeException family.
  */
-class WP_Secrets_Exception extends RuntimeException {
+class Secrets_Exception extends RuntimeException {
 
 	/**
 	 * The secret key that triggered the error, if applicable.

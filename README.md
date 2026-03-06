@@ -1,4 +1,4 @@
-# WP Secrets Manager
+# Secrets Manager
 
 A standardized secrets management API for WordPress. Provides `get_secret()` and `set_secret()` — the missing secrets API that WordPress has always needed. All secrets are encrypted at rest. Always.
 
@@ -6,7 +6,7 @@ A standardized secrets management API for WordPress. Provides `get_secret()` and
 
 Every WordPress plugin that connects to an external service stores API keys, tokens, and credentials in the `wp_options` table — in plaintext. There is no standard API for secrets management. Google Site Kit, WooCommerce, Mailchimp, Yoast, and hundreds of other plugins each reinvent their own (usually insecure) approach.
 
-**WP Secrets Manager** solves this by providing a single, extensible API where encryption is the only option.
+**Secrets Manager** solves this by providing a single, extensible API where encryption is the only option.
 
 ## Quick Start
 
@@ -51,10 +51,10 @@ define( 'WP_SECRETS_KEY', getenv( 'MY_SECRETS_KEY' ) );
 
 ### Architecture
 
-WP Secrets Manager uses a three-layer architecture:
+Secrets Manager uses a three-layer architecture:
 
 1. **Consumer Layer** — Global functions (`get_secret()`, `set_secret()`) and WP-CLI commands.
-2. **SDK / Public API** — The `WP_Secrets` class that enforces access control, validates keys, fires audit hooks, and delegates to the active provider.
+2. **SDK / Public API** — The `Secrets` class that enforces access control, validates keys, fires audit hooks, and delegates to the active provider.
 3. **Provider Layer** — Pluggable backends that store secrets. Ships with one built-in encrypted provider; supports third-party backends via the provider interface.
 
 ### Master Key Architecture
@@ -87,7 +87,7 @@ define( 'WP_SECRETS_PROVIDER', 'aws-kms' );
 
 ## Key Rotation
 
-WP Secrets Manager supports seamless key rotation via `WP_SECRETS_KEY_PREVIOUS`:
+Secrets Manager supports seamless key rotation via `WP_SECRETS_KEY_PREVIOUS`:
 
 1. Set `WP_SECRETS_KEY_PREVIOUS` to your current key.
 2. Set `WP_SECRETS_KEY` to your new key.
@@ -158,10 +158,10 @@ The SDK enforces namespace-based access control:
 2. **Cross-namespace** — Requires the `manage_secrets` capability (granted to administrators by default).
 3. **CLI** — WP-CLI commands bypass namespace restrictions (shell access implies trust).
 
-Customize access with the `wp_secrets_access` filter:
+Customize access with the `secrets_access` filter:
 
 ```php
-add_filter( 'wp_secrets_access', function( bool $allowed, string $key, string $operation, array $context ): bool {
+add_filter( 'secrets_access', function( bool $allowed, string $key, string $operation, array $context ): bool {
     if ( $context['plugin'] === 'my-monitor' && $operation === 'exists' ) {
         return true;
     }
@@ -175,47 +175,47 @@ add_filter( 'wp_secrets_access', function( bool $allowed, string $key, string $o
 
 | Hook | Parameters | Description |
 |------|-----------|-------------|
-| `wp_secrets_register_providers` | — | Fire to register third-party providers |
-| `wp_secrets_provider_registered` | `$id, $provider` | After a provider is registered |
-| `wp_secrets_provider_selected` | `$id, $method` | After the active provider is chosen |
-| `wp_secrets_accessed` | `$key, $operation, $context` | Every secret operation |
-| `wp_secrets_get` | `$key, $context` | After a get operation |
-| `wp_secrets_set` | `$key, $context` | After a set operation (value NOT passed) |
-| `wp_secrets_delete` | `$key, $context` | After a delete operation |
-| `wp_secrets_exists` | `$key, $context` | After an exists check |
-| `wp_secrets_list` | `$key, $context` | After a list operation |
-| `wp_secrets_post_set` | `$key, $context` | After successful storage |
-| `wp_secrets_post_delete` | `$key, $result, $context` | After deletion attempt |
-| `wp_secrets_access_denied` | `$key, $operation, $context` | When access is denied |
-| `wp_secrets_master_key_rotated` | `$key_source` | When the master key is re-encrypted after rotation |
-| `wp_secrets_admin_page_before` | `$providers, $active_id` | Before admin page render |
-| `wp_secrets_admin_page_after` | `$providers, $active_id` | After admin page render |
+| `secrets_register_providers` | — | Fire to register third-party providers |
+| `secrets_provider_registered` | `$id, $provider` | After a provider is registered |
+| `secrets_provider_selected` | `$id, $method` | After the active provider is chosen |
+| `secrets_accessed` | `$key, $operation, $context` | Every secret operation |
+| `secrets_get` | `$key, $context` | After a get operation |
+| `secrets_set` | `$key, $context` | After a set operation (value NOT passed) |
+| `secrets_delete` | `$key, $context` | After a delete operation |
+| `secrets_exists` | `$key, $context` | After an exists check |
+| `secrets_list` | `$key, $context` | After a list operation |
+| `secrets_post_set` | `$key, $context` | After successful storage |
+| `secrets_post_delete` | `$key, $result, $context` | After deletion attempt |
+| `secrets_access_denied` | `$key, $operation, $context` | When access is denied |
+| `secrets_master_key_rotated` | `$key_source` | When the master key is re-encrypted after rotation |
+| `secrets_admin_page_before` | `$providers, $active_id` | Before admin page render |
+| `secrets_admin_page_after` | `$providers, $active_id` | After admin page render |
 
 ### Filters
 
 | Filter | Parameters | Description |
 |--------|-----------|-------------|
-| `wp_secrets_provider` | `$provider_id, $key, $context` | Override which provider handles a specific key |
-| `wp_secrets_pre_get` | `$value, $key, $context` | Short-circuit get (return non-null to bypass provider) |
-| `wp_secrets_pre_set` | `$value, $key, $context` | Modify value before storage |
-| `wp_secrets_access` | `$allowed, $key, $operation, $context` | Override access control decisions |
+| `secrets_provider` | `$provider_id, $key, $context` | Override which provider handles a specific key |
+| `secrets_pre_get` | `$value, $key, $context` | Short-circuit get (return non-null to bypass provider) |
+| `secrets_pre_set` | `$value, $key, $context` | Modify value before storage |
+| `secrets_access` | `$allowed, $key, $operation, $context` | Override access control decisions |
 
 ## Writing a Custom Provider
 
-Third-party providers implement the `WP_Secrets_Provider` interface and register during `wp_secrets_register_providers`:
+Third-party providers implement the `Secrets_Provider` interface and register during `secrets_register_providers`:
 
 ```php
 <?php
 /**
- * Plugin Name: WP Secrets — AWS KMS Provider
- * Requires Plugins: wp-secrets-manager
+ * Plugin Name: Secrets — AWS KMS Provider
+ * Requires Plugins: secrets-manager
  */
 
-add_action( 'wp_secrets_register_providers', function() {
-    wp_secrets_register_provider( new My_KMS_Provider() );
+add_action( 'secrets_register_providers', function() {
+    secrets_register_provider( new My_KMS_Provider() );
 });
 
-class My_KMS_Provider implements WP_Secrets_Provider {
+class My_KMS_Provider implements Secrets_Provider {
 
     public function get_id(): string {
         return 'aws-kms';
@@ -238,7 +238,7 @@ class My_KMS_Provider implements WP_Secrets_Provider {
 }
 ```
 
-## Adopting WP Secrets Manager in Your Plugin
+## Adopting Secrets Manager in Your Plugin
 
 Support both secrets-managed and traditional sites:
 
@@ -265,7 +265,7 @@ function my_plugin_set_api_key( string $value ): void {
 
 ## Site Health Integration
 
-WP Secrets Manager adds checks to Tools > Site Health:
+Secrets Manager adds checks to Tools > Site Health:
 
 - **Recommended** — Using key derived from WordPress salts; suggests defining `WP_SECRETS_KEY`
 - **Good** — Encrypted provider active with dedicated key

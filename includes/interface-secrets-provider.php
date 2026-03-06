@@ -1,19 +1,19 @@
 <?php
 /**
- * WP Secrets Provider Interface
+ * Secrets Provider Interface
  *
  * All secrets backends must implement this interface. Providers are
- * registered via the `wp_secrets_register_providers` action or by
- * calling wp_secrets_register_provider() directly.
+ * registered via the `secrets_register_providers` action or by
+ * calling secrets_register_provider() directly.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-interface WP_Secrets_Provider {
+interface Secrets_Provider {
 
 	/**
 	 * Unique identifier for this provider (e.g. 'encrypted-options', 'aws-kms').
@@ -63,7 +63,7 @@ interface WP_Secrets_Provider {
 	 * @param array  $context Additional context (plugin slug, etc.).
 	 * @return string|null The secret value, or null if not found.
 	 *
-	 * @throws WP_Secrets_Exception On backend errors.
+	 * @throws Secrets_Exception On backend errors.
 	 */
 	public function get( string $key, array $context = [] ): ?string;
 
@@ -75,7 +75,7 @@ interface WP_Secrets_Provider {
 	 * @param array  $context Additional context.
 	 * @return bool True on success.
 	 *
-	 * @throws WP_Secrets_Exception On backend errors.
+	 * @throws Secrets_Exception On backend errors.
 	 */
 	public function set( string $key, string $value, array $context = [] ): bool;
 

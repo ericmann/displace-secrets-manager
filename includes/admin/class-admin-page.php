@@ -1,13 +1,13 @@
 <?php
 /**
- * WP Secrets Admin Page
+ * Secrets Admin Page
  *
  * Provides a minimal admin UI under Tools > Secrets that shows
  * the active provider, registered providers, and stored secret keys.
  *
  * Secret values are NEVER displayed in the admin UI.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Admin page for secrets management overview.
  */
-class WP_Secrets_Admin_Page {
+class Secrets_Admin_Page {
 
 	/**
 	 * Constructor — hooks into admin_menu.
@@ -31,10 +31,10 @@ class WP_Secrets_Admin_Page {
 	 */
 	public function register_page(): void {
 		add_management_page(
-			__( 'Secrets Manager', 'wp-secrets-manager' ),
-			__( 'Secrets', 'wp-secrets-manager' ),
+			__( 'Secrets Manager', 'secrets-manager' ),
+			__( 'Secrets', 'secrets-manager' ),
 			'manage_options',
-			'wp-secrets-manager',
+			'secrets-manager',
 			array( $this, 'render_page' )
 		);
 	}
@@ -44,10 +44,10 @@ class WP_Secrets_Admin_Page {
 	 */
 	public function render_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'wp-secrets-manager' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'secrets-manager' ) );
 		}
 
-		$manager   = WP_Secrets_Manager::get_instance();
+		$manager   = Secrets_Manager::get_instance();
 		$providers = $manager->get_providers();
 		$active_id = $manager->get_active_provider_id();
 		$keys      = array();
@@ -60,24 +60,24 @@ class WP_Secrets_Admin_Page {
 		/**
 		 * Fires before the secrets admin page is rendered.
 		 *
-		 * @param WP_Secrets_Provider[] $providers All registered providers.
+		 * @param Secrets_Provider[] $providers All registered providers.
 		 * @param string|null           $active_id The active provider ID.
 		 */
-		do_action( 'wp_secrets_admin_page_before', $providers, $active_id );
+		do_action( 'secrets_admin_page_before', $providers, $active_id );
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Secrets Manager', 'wp-secrets-manager' ); ?></h1>
+			<h1><?php esc_html_e( 'Secrets Manager', 'secrets-manager' ); ?></h1>
 
-			<h2><?php esc_html_e( 'Active Provider', 'wp-secrets-manager' ); ?></h2>
+			<h2><?php esc_html_e( 'Active Provider', 'secrets-manager' ); ?></h2>
 			<?php if ( $active_provider ) : ?>
 				<table class="widefat striped">
 					<tbody>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Provider', 'wp-secrets-manager' ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Provider', 'secrets-manager' ); ?></th>
 							<td><?php echo esc_html( $active_provider->get_name() ); ?> (<code><?php echo esc_html( $active_provider->get_id() ); ?></code>)</td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Status', 'wp-secrets-manager' ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Status', 'secrets-manager' ); ?></th>
 							<td>
 								<?php
 								$health = $active_provider->health_check();
@@ -91,16 +91,16 @@ class WP_Secrets_Admin_Page {
 								?>
 							</td>
 						</tr>
-						<?php if ( $active_provider instanceof WP_Secrets_Provider_Encrypted_Options ) : ?>
+						<?php if ( $active_provider instanceof Secrets_Provider_Encrypted_Options ) : ?>
 							<tr>
-								<th scope="row"><?php esc_html_e( 'Key Source', 'wp-secrets-manager' ); ?></th>
+								<th scope="row"><?php esc_html_e( 'Key Source', 'secrets-manager' ); ?></th>
 								<td>
 									<?php
 									$key_source = $active_provider->get_key_source();
-									if ( WP_Secrets_Provider_Encrypted_Options::KEY_SOURCE_CONSTANT === $key_source ) {
-										esc_html_e( 'Dedicated WP_SECRETS_KEY constant', 'wp-secrets-manager' );
+									if ( Secrets_Provider_Encrypted_Options::KEY_SOURCE_CONSTANT === $key_source ) {
+										esc_html_e( 'Dedicated WP_SECRETS_KEY constant', 'secrets-manager' );
 									} else {
-										esc_html_e( 'Derived from WordPress salts (LOGGED_IN_KEY + LOGGED_IN_SALT)', 'wp-secrets-manager' );
+										esc_html_e( 'Derived from WordPress salts (LOGGED_IN_KEY + LOGGED_IN_SALT)', 'secrets-manager' );
 									}
 									?>
 								</td>
@@ -110,20 +110,20 @@ class WP_Secrets_Admin_Page {
 				</table>
 			<?php else : ?>
 				<div class="notice notice-error">
-					<p><?php esc_html_e( 'No secrets provider is active. Sodium functions may not be available.', 'wp-secrets-manager' ); ?></p>
+					<p><?php esc_html_e( 'No secrets provider is active. Sodium functions may not be available.', 'secrets-manager' ); ?></p>
 				</div>
 			<?php endif; ?>
 
 			<?php if ( count( $providers ) > 1 ) : ?>
-				<h2><?php esc_html_e( 'Registered Providers', 'wp-secrets-manager' ); ?></h2>
+				<h2><?php esc_html_e( 'Registered Providers', 'secrets-manager' ); ?></h2>
 				<table class="widefat striped">
 					<thead>
 						<tr>
-							<th><?php esc_html_e( 'Provider', 'wp-secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'ID', 'wp-secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'Priority', 'wp-secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'Available', 'wp-secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'Active', 'wp-secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Provider', 'secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'ID', 'secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Priority', 'secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Available', 'secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Active', 'secrets-manager' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -133,23 +133,23 @@ class WP_Secrets_Admin_Page {
 								<td><code><?php echo esc_html( $provider->get_id() ); ?></code></td>
 								<td><?php echo esc_html( $provider->get_priority() ); ?></td>
 								<td><?php echo $provider->is_available() ? '&#9989;' : '&#10060;'; ?></td>
-								<td><?php echo $provider->get_id() === $active_id ? '<strong>' . esc_html__( 'Active', 'wp-secrets-manager' ) . '</strong>' : '—'; ?></td>
+								<td><?php echo $provider->get_id() === $active_id ? '<strong>' . esc_html__( 'Active', 'secrets-manager' ) . '</strong>' : '—'; ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
 				</table>
 			<?php endif; ?>
 
-			<h2><?php esc_html_e( 'Stored Secrets', 'wp-secrets-manager' ); ?></h2>
+			<h2><?php esc_html_e( 'Stored Secrets', 'secrets-manager' ); ?></h2>
 			<?php if ( empty( $keys ) ) : ?>
-				<p><?php esc_html_e( 'No secrets stored yet.', 'wp-secrets-manager' ); ?></p>
+				<p><?php esc_html_e( 'No secrets stored yet.', 'secrets-manager' ); ?></p>
 			<?php else : ?>
-				<p class="description"><?php esc_html_e( 'Only secret key names are displayed. Values are never shown in the admin interface.', 'wp-secrets-manager' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Only secret key names are displayed. Values are never shown in the admin interface.', 'secrets-manager' ); ?></p>
 				<table class="widefat striped">
 					<thead>
 						<tr>
-							<th><?php esc_html_e( 'Key', 'wp-secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'Namespace', 'wp-secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Key', 'secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Namespace', 'secrets-manager' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -159,7 +159,7 @@ class WP_Secrets_Admin_Page {
 								<td>
 									<?php
 									$ns = strstr( $key, '/', true );
-									echo esc_html( $ns ?: __( '(global)', 'wp-secrets-manager' ) );
+									echo esc_html( $ns ?: __( '(global)', 'secrets-manager' ) );
 									?>
 								</td>
 							</tr>
@@ -168,12 +168,12 @@ class WP_Secrets_Admin_Page {
 				</table>
 			<?php endif; ?>
 
-			<h2><?php esc_html_e( 'WP-CLI', 'wp-secrets-manager' ); ?></h2>
+			<h2><?php esc_html_e( 'WP-CLI', 'secrets-manager' ); ?></h2>
 			<p>
 				<?php
 				printf(
 					/* translators: 1: wp secret command, 2: wp help secret command */
-					esc_html__( 'Manage secrets from the command line with %1$s. Run %2$s for full documentation.', 'wp-secrets-manager' ),
+					esc_html__( 'Manage secrets from the command line with %1$s. Run %2$s for full documentation.', 'secrets-manager' ),
 					'<code>wp secret</code>',
 					'<code>wp help secret</code>'
 				);
@@ -184,9 +184,9 @@ class WP_Secrets_Admin_Page {
 		/**
 		 * Fires after the secrets admin page is rendered.
 		 *
-		 * @param WP_Secrets_Provider[] $providers All registered providers.
+		 * @param Secrets_Provider[] $providers All registered providers.
 		 * @param string|null           $active_id The active provider ID.
 		 */
-		do_action( 'wp_secrets_admin_page_after', $providers, $active_id );
+		do_action( 'secrets_admin_page_after', $providers, $active_id );
 	}
 }

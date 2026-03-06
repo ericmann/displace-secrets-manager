@@ -1,11 +1,11 @@
 <?php
 /**
- * WP-CLI Commands for WP Secrets Manager
+ * WP-CLI Commands for Secrets Manager
  *
  * Provides the `wp secret` command family for managing secrets
  * from the command line.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! class_exists( 'WP_CLI_Command' ) ) {
 }
 
 /**
- * Manage secrets stored by WP Secrets Manager.
+ * Manage secrets stored by Secrets Manager.
  *
  * ## EXAMPLES
  *
@@ -39,7 +39,7 @@ if ( ! class_exists( 'WP_CLI_Command' ) ) {
  *     # Show provider info
  *     wp secret provider
  */
-class WP_Secrets_CLI extends WP_CLI_Command {
+class Secrets_CLI extends WP_CLI_Command {
 
 	/**
 	 * Store a secret.
@@ -85,7 +85,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 			'global' => \WP_CLI\Utils\get_flag_value( $assoc_args, 'global', false ),
 		);
 
-		$manager = WP_Secrets_Manager::get_instance();
+		$manager = Secrets_Manager::get_instance();
 		$valid   = $manager->validate_key( $key, $context );
 
 		if ( is_wp_error( $valid ) ) {
@@ -94,7 +94,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 
 		try {
 			$result = $manager->set( $key, $value, $context );
-		} catch ( WP_Secrets_Exception $e ) {
+		} catch ( Secrets_Exception $e ) {
 			WP_CLI::error( $e->getMessage() );
 		}
 
@@ -135,11 +135,11 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 			'global' => \WP_CLI\Utils\get_flag_value( $assoc_args, 'global', false ),
 		);
 
-		$manager = WP_Secrets_Manager::get_instance();
+		$manager = Secrets_Manager::get_instance();
 
 		try {
 			$value = $manager->get( $key, $context );
-		} catch ( WP_Secrets_Exception $e ) {
+		} catch ( Secrets_Exception $e ) {
 			WP_CLI::error( $e->getMessage() );
 		}
 
@@ -184,7 +184,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 			'global' => \WP_CLI\Utils\get_flag_value( $assoc_args, 'global', false ),
 		);
 
-		$manager = WP_Secrets_Manager::get_instance();
+		$manager = Secrets_Manager::get_instance();
 		$exists  = $manager->exists( $key, $context );
 
 		if ( $exists ) {
@@ -223,7 +223,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 		$format  = \WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
 		$context = array( 'is_cli' => true );
 
-		$manager = WP_Secrets_Manager::get_instance();
+		$manager = Secrets_Manager::get_instance();
 		$keys    = $manager->list_keys( $prefix, $context );
 
 		if ( empty( $keys ) ) {
@@ -276,11 +276,11 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 
 		WP_CLI::confirm( sprintf( 'Are you sure you want to delete secret "%s"?', $key ), $assoc_args );
 
-		$manager = WP_Secrets_Manager::get_instance();
+		$manager = Secrets_Manager::get_instance();
 
 		try {
 			$result = $manager->delete( $key, $context );
-		} catch ( WP_Secrets_Exception $e ) {
+		} catch ( Secrets_Exception $e ) {
 			WP_CLI::error( $e->getMessage() );
 		}
 
@@ -327,7 +327,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 		$dry_run = \WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
 		$delete  = \WP_CLI\Utils\get_flag_value( $assoc_args, 'delete-source', false );
 
-		$manager       = WP_Secrets_Manager::get_instance();
+		$manager       = Secrets_Manager::get_instance();
 		$from_provider = $manager->get_provider( $from_id );
 		$to_provider   = $manager->get_provider( $to_id );
 
@@ -390,7 +390,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 				}
 
 				$success++;
-			} catch ( WP_Secrets_Exception $e ) {
+			} catch ( Secrets_Exception $e ) {
 				WP_CLI::warning( sprintf( 'Error migrating "%s": %s', $key, $e->getMessage() ) );
 				$failed++;
 			}
@@ -431,14 +431,14 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 	 * @param array $assoc_args Associative arguments.
 	 */
 	public function rotate( $args, $assoc_args ) {
-		$manager  = WP_Secrets_Manager::get_instance();
+		$manager  = Secrets_Manager::get_instance();
 		$provider = $manager->get_active_provider();
 
 		if ( ! $provider ) {
 			WP_CLI::error( 'No active provider.' );
 		}
 
-		if ( ! ( $provider instanceof WP_Secrets_Provider_Encrypted_Options ) ) {
+		if ( ! ( $provider instanceof Secrets_Provider_Encrypted_Options ) ) {
 			WP_CLI::error( 'The active provider does not support master key rotation.' );
 		}
 
@@ -446,7 +446,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 
 		try {
 			$result = $provider->rotate_master_key();
-		} catch ( WP_Secrets_Exception $e ) {
+		} catch ( Secrets_Exception $e ) {
 			WP_CLI::error( $e->getMessage() );
 		}
 
@@ -475,7 +475,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 	 */
 	public function provider( $args, $assoc_args ) {
 		$format  = \WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
-		$manager = WP_Secrets_Manager::get_instance();
+		$manager = Secrets_Manager::get_instance();
 
 		$providers = $manager->get_providers();
 		$active_id = $manager->get_active_provider_id();
@@ -523,7 +523,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 		$format  = \WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
 		$context = array( 'is_cli' => true );
 
-		$manager  = WP_Secrets_Manager::get_instance();
+		$manager  = Secrets_Manager::get_instance();
 		$provider = $manager->get_active_provider();
 
 		if ( ! $provider ) {
@@ -590,4 +590,4 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 	}
 }
 
-WP_CLI::add_command( 'secret', 'WP_Secrets_CLI' );
+WP_CLI::add_command( 'secret', 'Secrets_CLI' );

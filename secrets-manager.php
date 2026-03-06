@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WP Secrets Manager
+ * Plugin Name: Secrets Manager
  * Plugin URI:  https://github.com/ericmann/wp-secrets-manager
  * Description: A standardized secrets management API for WordPress. Provides get_secret() and set_secret() with automatic encryption and a pluggable provider interface for external backends.
  * Version:     0.1.0
@@ -8,33 +8,33 @@
  * Author URI:  https://eamann.com
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: wp-secrets-manager
+ * Text Domain: secrets-manager
  * Requires at least: 6.9
  * Requires PHP: 7.2
  *
  * Copyright (c) 2026 Eric Mann
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WP_SECRETS_MANAGER_VERSION', '0.1.0' );
-define( 'WP_SECRETS_MANAGER_FILE', __FILE__ );
-define( 'WP_SECRETS_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WP_SECRETS_MANAGER_URL', plugin_dir_url( __FILE__ ) );
+define( 'SECRETS_MANAGER_VERSION', '0.1.0' );
+define( 'SECRETS_MANAGER_FILE', __FILE__ );
+define( 'SECRETS_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SECRETS_MANAGER_URL', plugin_dir_url( __FILE__ ) );
 
-require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets-exception.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/interface-wp-secrets-provider.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets-context.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets-audit.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets-manager.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/providers/class-wp-secrets-provider-encrypted-options.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/admin/class-admin-page.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/admin/class-health-check.php';
+require_once SECRETS_MANAGER_DIR . 'includes/class-secrets-exception.php';
+require_once SECRETS_MANAGER_DIR . 'includes/interface-secrets-provider.php';
+require_once SECRETS_MANAGER_DIR . 'includes/class-secrets-context.php';
+require_once SECRETS_MANAGER_DIR . 'includes/class-secrets-audit.php';
+require_once SECRETS_MANAGER_DIR . 'includes/class-secrets-manager.php';
+require_once SECRETS_MANAGER_DIR . 'includes/class-secrets.php';
+require_once SECRETS_MANAGER_DIR . 'includes/providers/class-secrets-provider-encrypted-options.php';
+require_once SECRETS_MANAGER_DIR . 'includes/admin/class-admin-page.php';
+require_once SECRETS_MANAGER_DIR . 'includes/admin/class-health-check.php';
 
 /**
  * Retrieve a secret value.
@@ -45,7 +45,7 @@ require_once WP_SECRETS_MANAGER_DIR . 'includes/admin/class-health-check.php';
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Intentional public API.
 function get_secret( string $key, array $context = [] ): ?string {
-	return WP_Secrets::get( $key, $context );
+	return Secrets::get( $key, $context );
 }
 
 /**
@@ -58,7 +58,7 @@ function get_secret( string $key, array $context = [] ): ?string {
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Intentional public API.
 function set_secret( string $key, string $value, array $context = [] ): bool {
-	return WP_Secrets::set( $key, $value, $context );
+	return Secrets::set( $key, $value, $context );
 }
 
 /**
@@ -70,7 +70,7 @@ function set_secret( string $key, string $value, array $context = [] ): bool {
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Intentional public API.
 function delete_secret( string $key, array $context = [] ): bool {
-	return WP_Secrets::delete( $key, $context );
+	return Secrets::delete( $key, $context );
 }
 
 /**
@@ -82,44 +82,44 @@ function delete_secret( string $key, array $context = [] ): bool {
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Intentional public API.
 function secret_exists( string $key, array $context = [] ): bool {
-	return WP_Secrets::exists( $key, $context );
+	return Secrets::exists( $key, $context );
 }
 
 /**
  * Register a secrets provider with the manager.
  *
- * @param WP_Secrets_Provider $provider The provider instance.
+ * @param Secrets_Provider $provider The provider instance.
  * @return bool True if registered successfully.
  */
-function wp_secrets_register_provider( WP_Secrets_Provider $provider ): bool {
-	return WP_Secrets_Manager::get_instance()->register_provider( $provider );
+function secrets_register_provider( Secrets_Provider $provider ): bool {
+	return Secrets_Manager::get_instance()->register_provider( $provider );
 }
 
 /**
  * Bootstrap the plugin on the `plugins_loaded` hook to allow
  * other plugins to register providers during init.
  */
-function wp_secrets_manager_init() {
-	$manager = WP_Secrets_Manager::get_instance();
-	$manager->register_provider( new WP_Secrets_Provider_Encrypted_Options() );
+function secrets_manager_init() {
+	$manager = Secrets_Manager::get_instance();
+	$manager->register_provider( new Secrets_Provider_Encrypted_Options() );
 
 	/**
 	 * Fires when providers should be registered.
 	 *
 	 * Third-party provider plugins hook here to register their backends.
 	 */
-	do_action( 'wp_secrets_register_providers' );
+	do_action( 'secrets_register_providers' );
 
 	$manager->select_provider();
 
 	if ( is_admin() ) {
-		new WP_Secrets_Admin_Page();
+		new Secrets_Admin_Page();
 	}
 
-	new WP_Secrets_Health_Check();
+	new Secrets_Health_Check();
 }
-add_action( 'plugins_loaded', 'wp_secrets_manager_init' );
+add_action( 'plugins_loaded', 'secrets_manager_init' );
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once WP_SECRETS_MANAGER_DIR . 'cli/class-wp-secrets-cli.php';
+	require_once SECRETS_MANAGER_DIR . 'cli/class-secrets-cli.php';
 }

@@ -1,5 +1,5 @@
 {
-	"name": "displace-foundry/wp-secrets-manager",
+	"name": "ericmann/secrets-manager",
 	"description": "A standardized secrets management API for WordPress with automatic encryption.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",

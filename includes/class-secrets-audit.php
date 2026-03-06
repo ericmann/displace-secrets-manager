@@ -1,6 +1,6 @@
 <?php
 /**
- * WP Secrets Audit Logger
+ * Secrets Audit Logger
  *
  * Fires WordPress actions for every secret operation so that
  * third-party audit plugins (WP Activity Log, Stream, Simple History)
@@ -8,7 +8,7 @@
  *
  * Secret values are NEVER passed through these hooks.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Audit logger for secrets operations.
  */
-final class WP_Secrets_Audit {
+final class Secrets_Audit {
 
 	/**
 	 * Log a secrets operation by firing the appropriate WordPress actions.
@@ -42,21 +42,21 @@ final class WP_Secrets_Audit {
 		 * @param string $operation The operation performed.
 		 * @param array  $context   Caller context (never contains the secret value).
 		 */
-		do_action( 'wp_secrets_accessed', $key, $operation, $context );
+		do_action( 'secrets_accessed', $key, $operation, $context );
 
 		/**
 		 * Fires for the specific operation type.
 		 *
 		 * Available hooks:
-		 *   - wp_secrets_get
-		 *   - wp_secrets_set
-		 *   - wp_secrets_delete
-		 *   - wp_secrets_exists
-		 *   - wp_secrets_list
+		 *   - secrets_get
+		 *   - secrets_set
+		 *   - secrets_delete
+		 *   - secrets_exists
+		 *   - secrets_list
 		 *
 		 * @param string $key     The secret key.
 		 * @param array  $context Caller context.
 		 */
-		do_action( "wp_secrets_{$operation}", $key, $context );
+		do_action( "secrets_{$operation}", $key, $context );
 	}
 }

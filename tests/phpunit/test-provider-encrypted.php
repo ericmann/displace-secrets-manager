@@ -3,9 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Tests for the WP_Secrets_Provider_Encrypted_Options class.
+ * Tests for the Secrets_Provider_Encrypted_Options class.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  * @group   encrypted
  */
 
@@ -14,7 +14,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	/**
 	 * Provider instance under test.
 	 *
-	 * @var WP_Secrets_Provider_Encrypted_Options
+	 * @var Secrets_Provider_Encrypted_Options
 	 */
 	private $provider;
 
@@ -24,7 +24,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->provider = new WP_Secrets_Provider_Encrypted_Options();
+		$this->provider = new Secrets_Provider_Encrypted_Options();
 		$this->provider->reset_cache();
 
 		$this->clean_secrets_options();
@@ -49,8 +49,8 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name = %s",
-				$wpdb->esc_like( '_wp_secret_' ) . '%',
-				'_wp_secrets_master_key'
+				$wpdb->esc_like( '_secret_' ) . '%',
+				'_secrets_master_key'
 			)
 		);
 
@@ -58,14 +58,14 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get_id
+	 * @covers Secrets_Provider_Encrypted_Options::get_id
 	 */
 	public function test_get_id() {
 		$this->assertSame( 'encrypted-options', $this->provider->get_id() );
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get_name
+	 * @covers Secrets_Provider_Encrypted_Options::get_name
 	 */
 	public function test_get_name() {
 		$name = $this->provider->get_name();
@@ -75,22 +75,22 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get_priority
+	 * @covers Secrets_Provider_Encrypted_Options::get_priority
 	 */
 	public function test_get_priority() {
 		$this->assertSame( 50, $this->provider->get_priority() );
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::is_available
+	 * @covers Secrets_Provider_Encrypted_Options::is_available
 	 */
 	public function test_is_available() {
 		$this->assertTrue( $this->provider->is_available() );
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get
+	 * @covers Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_set_then_get_returns_same_value() {
 		$this->provider->set( 'test/api_key', 'sk_live_abc123' );
@@ -99,8 +99,8 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get
+	 * @covers Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_set_overwrites_existing_value() {
 		$this->provider->set( 'test/api_key', 'original_value' );
@@ -110,7 +110,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::delete
+	 * @covers Secrets_Provider_Encrypted_Options::delete
 	 */
 	public function test_delete_returns_true_for_existing_key() {
 		$this->provider->set( 'test/to_delete', 'some_value' );
@@ -119,21 +119,21 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::delete
+	 * @covers Secrets_Provider_Encrypted_Options::delete
 	 */
 	public function test_delete_returns_false_for_nonexistent_key() {
 		$this->assertFalse( $this->provider->delete( 'test/never_existed' ) );
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::exists
+	 * @covers Secrets_Provider_Encrypted_Options::exists
 	 */
 	public function test_exists_returns_false_for_nonexistent_key() {
 		$this->assertFalse( $this->provider->exists( 'test/nonexistent' ) );
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::exists
+	 * @covers Secrets_Provider_Encrypted_Options::exists
 	 */
 	public function test_exists_returns_true_after_set() {
 		$this->provider->set( 'test/exists_check', 'value' );
@@ -142,7 +142,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::exists
+	 * @covers Secrets_Provider_Encrypted_Options::exists
 	 */
 	public function test_exists_returns_false_after_delete() {
 		$this->provider->set( 'test/delete_check', 'value' );
@@ -152,14 +152,14 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::list_keys
+	 * @covers Secrets_Provider_Encrypted_Options::list_keys
 	 */
 	public function test_list_keys_returns_empty_for_no_matches() {
 		$this->assertSame( array(), $this->provider->list_keys( 'nonexistent/' ) );
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::list_keys
+	 * @covers Secrets_Provider_Encrypted_Options::list_keys
 	 */
 	public function test_list_keys_returns_matching_keys() {
 		$this->provider->set( 'alpha/one', 'v1' );
@@ -174,7 +174,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::list_keys
+	 * @covers Secrets_Provider_Encrypted_Options::list_keys
 	 */
 	public function test_list_keys_filters_by_prefix() {
 		$this->provider->set( 'alpha/one', 'v1' );
@@ -189,7 +189,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::list_keys
+	 * @covers Secrets_Provider_Encrypted_Options::list_keys
 	 */
 	public function test_list_keys_excludes_master_key_option() {
 		$this->provider->set( 'test/trigger', 'value' );
@@ -197,20 +197,20 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 		$keys = $this->provider->list_keys();
 
 		foreach ( $keys as $key ) {
-			$this->assertNotSame( '_wp_secrets_master_key', WP_Secrets_Provider_Encrypted_Options::OPTION_PREFIX . $key );
+			$this->assertNotSame( '_secrets_master_key', Secrets_Provider_Encrypted_Options::OPTION_PREFIX . $key );
 		}
 	}
 
 	/**
 	 * Verify the raw option value does not contain the plaintext secret.
 	 *
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::set
 	 */
 	public function test_stored_value_is_not_plaintext() {
 		$plaintext = 'super_secret_api_key_12345';
 		$this->provider->set( 'test/encrypted_check', $plaintext );
 
-		$option_name = WP_Secrets_Provider_Encrypted_Options::option_name( 'test/encrypted_check' );
+		$option_name = Secrets_Provider_Encrypted_Options::option_name( 'test/encrypted_check' );
 		$raw         = get_option( $option_name );
 
 		$this->assertNotSame( $plaintext, $raw );
@@ -221,10 +221,10 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	 * Writing the same value twice should produce different ciphertext because
 	 * a fresh nonce is generated on each encrypt call.
 	 *
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::set
 	 */
 	public function test_nonce_is_unique_per_write() {
-		$option_name = WP_Secrets_Provider_Encrypted_Options::option_name( 'test/nonce_check' );
+		$option_name = Secrets_Provider_Encrypted_Options::option_name( 'test/nonce_check' );
 
 		$this->provider->set( 'test/nonce_check', 'same_value' );
 		$raw_first = get_option( $option_name );
@@ -236,8 +236,8 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get
+	 * @covers Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_empty_string_value_stored_correctly() {
 		$this->provider->set( 'test/empty', '' );
@@ -246,8 +246,8 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get
+	 * @covers Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_unicode_value_stored_correctly() {
 		$unicode = '日本語テスト 🔑 émojis ñ ü ö';
@@ -257,8 +257,8 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get
+	 * @covers Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_large_value_stored_correctly() {
 		$large = str_repeat( 'A', 4096 );
@@ -268,12 +268,12 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::option_name
+	 * @covers Secrets_Provider_Encrypted_Options::option_name
 	 */
 	public function test_option_name_preserves_key() {
 		$this->assertSame(
-			'_wp_secret_my-plugin/api_key',
-			WP_Secrets_Provider_Encrypted_Options::option_name( 'my-plugin/api_key' )
+			'_secret_my-plugin/api_key',
+			Secrets_Provider_Encrypted_Options::option_name( 'my-plugin/api_key' )
 		);
 	}
 
@@ -281,14 +281,14 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	 * Secrets must be stored with autoload disabled to avoid polluting
 	 * the global option cache on every page load.
 	 *
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::set
 	 */
 	public function test_autoload_is_disabled() {
 		global $wpdb;
 
 		$this->provider->set( 'test/autoload_check', 'value' );
 
-		$option_name = WP_Secrets_Provider_Encrypted_Options::option_name( 'test/autoload_check' );
+		$option_name = Secrets_Provider_Encrypted_Options::option_name( 'test/autoload_check' );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$autoload = $wpdb->get_var(
@@ -302,7 +302,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers WP_Secrets_Provider_Encrypted_Options::health_check
+	 * @covers Secrets_Provider_Encrypted_Options::health_check
 	 */
 	public function test_health_check_returns_valid_status() {
 		$result = $this->provider->health_check();
@@ -320,7 +320,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	 * WP_SECRETS_KEY is already defined in the test environment, this
 	 * test verifies the 'constant' path. Otherwise it is skipped.
 	 *
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get_key_source
+	 * @covers Secrets_Provider_Encrypted_Options::get_key_source
 	 */
 	public function test_key_source_with_constant() {
 		if ( ! defined( 'WP_SECRETS_KEY' ) ) {
@@ -337,7 +337,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	 *
 	 * Note: If WP_SECRETS_KEY is already defined, this test is skipped.
 	 *
-	 * @covers WP_Secrets_Provider_Encrypted_Options::get_key_source
+	 * @covers Secrets_Provider_Encrypted_Options::get_key_source
 	 */
 	public function test_key_source_fallback() {
 		if ( defined( 'WP_SECRETS_KEY' ) ) {
@@ -352,18 +352,18 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	/**
 	 * The master key option should be created on first use (i.e. first set()).
 	 *
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::set
 	 */
 	public function test_master_key_is_created_on_first_use() {
 		$this->assertFalse(
-			get_option( WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION, false ),
+			get_option( Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION, false ),
 			'Master key option should not exist before any operation.'
 		);
 
 		$this->provider->set( 'test/trigger_master', 'value' );
 
 		$this->assertNotFalse(
-			get_option( WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION, false ),
+			get_option( Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION, false ),
 			'Master key option should exist after a set() call.'
 		);
 	}
@@ -372,7 +372,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 	 * Setting two different secrets should reuse the same master key
 	 * rather than generating a new one each time.
 	 *
-	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers Secrets_Provider_Encrypted_Options::set
 	 */
 	public function test_master_key_reused_across_operations() {
 		global $wpdb;
@@ -383,7 +383,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 		$master_after_first = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
-				WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION
+				Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION
 			)
 		);
 
@@ -393,7 +393,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 		$master_after_second = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
-				WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION
+				Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION
 			)
 		);
 

@@ -3,13 +3,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Tests for WP_Secrets_Audit.
+ * Tests for Secrets_Audit.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  * @group audit
  */
 
-class Test_WP_Secrets_Audit extends WP_UnitTestCase {
+class Test_Secrets_Audit extends WP_UnitTestCase {
 
 	/**
 	 * Captured hook calls for verification.
@@ -24,16 +24,16 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 	}
 
 	public function tear_down() {
-		remove_all_actions( 'wp_secrets_accessed' );
-		remove_all_actions( 'wp_secrets_get' );
-		remove_all_actions( 'wp_secrets_set' );
-		remove_all_actions( 'wp_secrets_delete' );
+		remove_all_actions( 'secrets_accessed' );
+		remove_all_actions( 'secrets_get' );
+		remove_all_actions( 'secrets_set' );
+		remove_all_actions( 'secrets_delete' );
 		parent::tear_down();
 	}
 
 	public function test_log_fires_accessed_action() {
 		add_action(
-			'wp_secrets_accessed',
+			'secrets_accessed',
 			function ( $key, $operation, $context ) {
 				$this->hook_calls['accessed'] = array(
 					'key'       => $key,
@@ -45,7 +45,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 			3
 		);
 
-		WP_Secrets_Audit::log( 'get', 'foo/bar', array( 'plugin' => 'foo' ) );
+		Secrets_Audit::log( 'get', 'foo/bar', array( 'plugin' => 'foo' ) );
 
 		$this->assertArrayHasKey( 'accessed', $this->hook_calls );
 		$this->assertSame( 'foo/bar', $this->hook_calls['accessed']['key'] );
@@ -60,7 +60,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 		$captured = null;
 
 		add_action(
-			"wp_secrets_{$operation}",
+			"secrets_{$operation}",
 			function ( $key, $context ) use ( &$captured ) {
 				$captured = array(
 					'key'     => $key,
@@ -71,9 +71,9 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 			2
 		);
 
-		WP_Secrets_Audit::log( $operation, 'test/secret', array( 'plugin' => 'test' ) );
+		Secrets_Audit::log( $operation, 'test/secret', array( 'plugin' => 'test' ) );
 
-		$this->assertNotNull( $captured, "wp_secrets_{$operation} action should fire" );
+		$this->assertNotNull( $captured, "secrets_{$operation} action should fire" );
 		$this->assertSame( 'test/secret', $captured['key'] );
 	}
 
@@ -89,7 +89,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 		$captured_context = null;
 
 		add_action(
-			'wp_secrets_accessed',
+			'secrets_accessed',
 			function ( $key, $operation, $context ) use ( &$captured_context ) {
 				$captured_context = $context;
 			},
@@ -97,7 +97,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 			3
 		);
 
-		WP_Secrets_Audit::log( 'set', 'ns/key', array() );
+		Secrets_Audit::log( 'set', 'ns/key', array() );
 
 		$this->assertArrayHasKey( 'operation', $captured_context );
 		$this->assertSame( 'set', $captured_context['operation'] );
@@ -107,7 +107,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 		$captured_context = null;
 
 		add_action(
-			'wp_secrets_accessed',
+			'secrets_accessed',
 			function ( $key, $operation, $context ) use ( &$captured_context ) {
 				$captured_context = $context;
 			},
@@ -115,7 +115,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 			3
 		);
 
-		WP_Secrets_Audit::log( 'get', 'ns/key', array() );
+		Secrets_Audit::log( 'get', 'ns/key', array() );
 
 		$this->assertArrayHasKey( 'timestamp', $captured_context );
 		$this->assertNotEmpty( $captured_context['timestamp'] );
@@ -128,7 +128,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 		$captured_context = null;
 
 		add_action(
-			'wp_secrets_accessed',
+			'secrets_accessed',
 			function ( $key, $operation, $context ) use ( &$captured_context ) {
 				$captured_context = $context;
 			},
@@ -136,7 +136,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 			3
 		);
 
-		WP_Secrets_Audit::log( 'delete', 'ns/key', array() );
+		Secrets_Audit::log( 'delete', 'ns/key', array() );
 
 		$this->assertArrayHasKey( 'user_id', $captured_context );
 		$this->assertSame( $user_id, $captured_context['user_id'] );
@@ -146,7 +146,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 		$captured_context = null;
 
 		add_action(
-			'wp_secrets_set',
+			'secrets_set',
 			function ( $key, $context ) use ( &$captured_context ) {
 				$captured_context = $context;
 			},
@@ -154,7 +154,7 @@ class Test_WP_Secrets_Audit extends WP_UnitTestCase {
 			2
 		);
 
-		WP_Secrets_Audit::log( 'set', 'ns/api_key', array( 'plugin' => 'ns' ) );
+		Secrets_Audit::log( 'set', 'ns/api_key', array( 'plugin' => 'ns' ) );
 
 		$this->assertNotNull( $captured_context );
 		$this->assertArrayNotHasKey( 'value', $captured_context );

@@ -1,11 +1,11 @@
 <?php
 /**
- * WP Secrets Manager Orchestrator
+ * Secrets Manager Orchestrator
  *
  * Central coordinator that manages provider registration, selection,
  * access control, and delegates operations to the active provider.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Singleton orchestrator for the secrets system.
  */
-final class WP_Secrets_Manager {
+final class Secrets_Manager {
 
 	/**
 	 * Singleton instance.
@@ -27,7 +27,7 @@ final class WP_Secrets_Manager {
 	/**
 	 * Registered providers, keyed by provider ID.
 	 *
-	 * @var WP_Secrets_Provider[]
+	 * @var Secrets_Provider[]
 	 */
 	private $providers = array();
 
@@ -59,10 +59,10 @@ final class WP_Secrets_Manager {
 	/**
 	 * Register a secrets provider.
 	 *
-	 * @param WP_Secrets_Provider $provider The provider instance.
+	 * @param Secrets_Provider $provider The provider instance.
 	 * @return bool True if registered.
 	 */
-	public function register_provider( WP_Secrets_Provider $provider ): bool {
+	public function register_provider( Secrets_Provider $provider ): bool {
 		$id = $provider->get_id();
 
 		if ( isset( $this->providers[ $id ] ) ) {
@@ -70,7 +70,7 @@ final class WP_Secrets_Manager {
 				__METHOD__,
 				sprintf(
 					/* translators: %s: provider ID */
-					esc_html__( 'A secrets provider with ID "%s" is already registered.', 'wp-secrets-manager' ),
+					esc_html__( 'A secrets provider with ID "%s" is already registered.', 'secrets-manager' ),
 					esc_html( $id )
 				),
 				'0.1.0'
@@ -84,9 +84,9 @@ final class WP_Secrets_Manager {
 		 * Fires when a new secrets provider is registered.
 		 *
 		 * @param string              $id       Provider ID.
-		 * @param WP_Secrets_Provider $provider The provider instance.
+		 * @param Secrets_Provider $provider The provider instance.
 		 */
-		do_action( 'wp_secrets_provider_registered', $id, $provider );
+		do_action( 'secrets_provider_registered', $id, $provider );
 
 		return true;
 	}
@@ -112,7 +112,7 @@ final class WP_Secrets_Manager {
 			 * @param string $provider_id The selected provider ID.
 			 * @param string $method      How it was selected ('constant', 'auto').
 			 */
-			do_action( 'wp_secrets_provider_selected', $this->active_provider_id, 'constant' );
+			do_action( 'secrets_provider_selected', $this->active_provider_id, 'constant' );
 
 			return $this->active_provider_id;
 		}
@@ -131,7 +131,7 @@ final class WP_Secrets_Manager {
 		$this->active_provider_id = $best_id;
 
 		/** This action is documented above. */
-		do_action( 'wp_secrets_provider_selected', $this->active_provider_id, 'auto' );
+		do_action( 'secrets_provider_selected', $this->active_provider_id, 'auto' );
 
 		return $this->active_provider_id;
 	}
@@ -139,9 +139,9 @@ final class WP_Secrets_Manager {
 	/**
 	 * Get the active provider instance.
 	 *
-	 * @return WP_Secrets_Provider|null
+	 * @return Secrets_Provider|null
 	 */
-	public function get_active_provider(): ?WP_Secrets_Provider {
+	public function get_active_provider(): ?Secrets_Provider {
 		if ( null === $this->active_provider_id ) {
 			return null;
 		}
@@ -162,16 +162,16 @@ final class WP_Secrets_Manager {
 	 * Get a specific provider by ID.
 	 *
 	 * @param string $id Provider ID.
-	 * @return WP_Secrets_Provider|null
+	 * @return Secrets_Provider|null
 	 */
-	public function get_provider( string $id ): ?WP_Secrets_Provider {
+	public function get_provider( string $id ): ?Secrets_Provider {
 		return $this->providers[ $id ] ?? null;
 	}
 
 	/**
 	 * Get all registered providers.
 	 *
-	 * @return WP_Secrets_Provider[]
+	 * @return Secrets_Provider[]
 	 */
 	public function get_providers(): array {
 		return $this->providers;
@@ -180,13 +180,13 @@ final class WP_Secrets_Manager {
 	/**
 	 * Resolve which provider handles a specific key.
 	 *
-	 * Allows per-key provider overrides via the wp_secrets_provider filter.
+	 * Allows per-key provider overrides via the secrets_provider filter.
 	 *
 	 * @param string $key     The secret key.
 	 * @param array  $context Caller context.
-	 * @return WP_Secrets_Provider|null
+	 * @return Secrets_Provider|null
 	 */
-	public function resolve_provider( string $key, array $context = [] ): ?WP_Secrets_Provider {
+	public function resolve_provider( string $key, array $context = [] ): ?Secrets_Provider {
 		$provider_id = $this->active_provider_id;
 
 		/**
@@ -196,7 +196,7 @@ final class WP_Secrets_Manager {
 		 * @param string $key         The secret key being accessed.
 		 * @param array  $context     Caller context.
 		 */
-		$provider_id = apply_filters( 'wp_secrets_provider', $provider_id, $key, $context );
+		$provider_id = apply_filters( 'secrets_provider', $provider_id, $key, $context );
 
 		if ( $provider_id && isset( $this->providers[ $provider_id ] ) ) {
 			return $this->providers[ $provider_id ];
@@ -218,8 +218,8 @@ final class WP_Secrets_Manager {
 	public function validate_key( string $key, array $context = [] ) {
 		if ( '' === $key ) {
 			return new \WP_Error(
-				'wp_secrets_empty_key',
-				__( 'Secret key must not be empty.', 'wp-secrets-manager' )
+				'secrets_empty_key',
+				__( 'Secret key must not be empty.', 'secrets-manager' )
 			);
 		}
 
@@ -227,10 +227,10 @@ final class WP_Secrets_Manager {
 
 		if ( ! $is_global && false === strpos( $key, '/' ) ) {
 			return new \WP_Error(
-				'wp_secrets_invalid_key',
+				'secrets_invalid_key',
 				sprintf(
 					/* translators: %s: the invalid key */
-					__( 'Secret key "%s" must be namespaced with a forward slash (e.g. "my-plugin/api_key"). Use the --global flag for unnamespaced keys.', 'wp-secrets-manager' ),
+					__( 'Secret key "%s" must be namespaced with a forward slash (e.g. "my-plugin/api_key"). Use the --global flag for unnamespaced keys.', 'secrets-manager' ),
 					$key
 				)
 			);
@@ -238,8 +238,8 @@ final class WP_Secrets_Manager {
 
 		if ( preg_match( '/[^a-zA-Z0-9\/_\-\.]/', $key ) ) {
 			return new \WP_Error(
-				'wp_secrets_invalid_characters',
-				__( 'Secret key contains invalid characters. Use only alphanumeric characters, forward slashes, underscores, hyphens, and periods.', 'wp-secrets-manager' )
+				'secrets_invalid_characters',
+				__( 'Secret key contains invalid characters. Use only alphanumeric characters, forward slashes, underscores, hyphens, and periods.', 'secrets-manager' )
 			);
 		}
 
@@ -255,7 +255,7 @@ final class WP_Secrets_Manager {
 	 * @return bool
 	 */
 	public function check_access( string $key, string $operation, array $context ): bool {
-		$ctx = new WP_Secrets_Context( $context );
+		$ctx = new Secrets_Context( $context );
 
 		// Extract namespace from the key.
 		$namespace = strstr( $key, '/', true );
@@ -273,7 +273,7 @@ final class WP_Secrets_Manager {
 		 * @param string $operation The operation being performed.
 		 * @param array  $context   Caller context.
 		 */
-		$allowed = apply_filters( 'wp_secrets_access', $allowed, $key, $operation, $ctx->to_array() );
+		$allowed = apply_filters( 'secrets_access', $allowed, $key, $operation, $ctx->to_array() );
 
 		return (bool) $allowed;
 	}
@@ -300,7 +300,7 @@ final class WP_Secrets_Manager {
 			 * @param string $operation The denied operation.
 			 * @param array  $context   Caller context.
 			 */
-			do_action( 'wp_secrets_access_denied', $key, 'get', $context );
+			do_action( 'secrets_access_denied', $key, 'get', $context );
 			return null;
 		}
 
@@ -313,9 +313,9 @@ final class WP_Secrets_Manager {
 		 * @param string      $key     The secret key.
 		 * @param array       $context Caller context.
 		 */
-		$pre = apply_filters( 'wp_secrets_pre_get', null, $key, $context );
+		$pre = apply_filters( 'secrets_pre_get', null, $key, $context );
 		if ( null !== $pre ) {
-			WP_Secrets_Audit::log( 'get', $key, $context );
+			Secrets_Audit::log( 'get', $key, $context );
 			return $pre;
 		}
 
@@ -326,7 +326,7 @@ final class WP_Secrets_Manager {
 
 		$value = $provider->get( $key, $context );
 
-		WP_Secrets_Audit::log( 'get', $key, $context );
+		Secrets_Audit::log( 'get', $key, $context );
 
 		return $value;
 	}
@@ -347,7 +347,7 @@ final class WP_Secrets_Manager {
 		}
 
 		if ( ! $this->check_access( $key, 'set', $context ) ) {
-			do_action( 'wp_secrets_access_denied', $key, 'set', $context );
+			do_action( 'secrets_access_denied', $key, 'set', $context );
 			return false;
 		}
 
@@ -358,7 +358,7 @@ final class WP_Secrets_Manager {
 		 * @param string $key     The secret key.
 		 * @param array  $context Caller context.
 		 */
-		$value = apply_filters( 'wp_secrets_pre_set', $value, $key, $context );
+		$value = apply_filters( 'secrets_pre_set', $value, $key, $context );
 
 		$provider = $this->resolve_provider( $key, $context );
 		if ( null === $provider ) {
@@ -368,7 +368,7 @@ final class WP_Secrets_Manager {
 		$result = $provider->set( $key, $value, $context );
 
 		if ( $result ) {
-			WP_Secrets_Audit::log( 'set', $key, $context );
+			Secrets_Audit::log( 'set', $key, $context );
 
 			/**
 			 * Fires after a secret is successfully stored.
@@ -376,7 +376,7 @@ final class WP_Secrets_Manager {
 			 * @param string $key     The secret key.
 			 * @param array  $context Caller context.
 			 */
-			do_action( 'wp_secrets_post_set', $key, $context );
+			do_action( 'secrets_post_set', $key, $context );
 		}
 
 		return $result;
@@ -397,7 +397,7 @@ final class WP_Secrets_Manager {
 		}
 
 		if ( ! $this->check_access( $key, 'delete', $context ) ) {
-			do_action( 'wp_secrets_access_denied', $key, 'delete', $context );
+			do_action( 'secrets_access_denied', $key, 'delete', $context );
 			return false;
 		}
 
@@ -408,7 +408,7 @@ final class WP_Secrets_Manager {
 
 		$result = $provider->delete( $key, $context );
 
-		WP_Secrets_Audit::log( 'delete', $key, $context );
+		Secrets_Audit::log( 'delete', $key, $context );
 
 		/**
 		 * Fires after a secret is deleted (or deletion attempted).
@@ -417,7 +417,7 @@ final class WP_Secrets_Manager {
 		 * @param bool   $result  Whether the deletion succeeded.
 		 * @param array  $context Caller context.
 		 */
-		do_action( 'wp_secrets_post_delete', $key, $result, $context );
+		do_action( 'secrets_post_delete', $key, $result, $context );
 
 		return $result;
 	}
@@ -436,7 +436,7 @@ final class WP_Secrets_Manager {
 		}
 
 		if ( ! $this->check_access( $key, 'exists', $context ) ) {
-			do_action( 'wp_secrets_access_denied', $key, 'exists', $context );
+			do_action( 'secrets_access_denied', $key, 'exists', $context );
 			return false;
 		}
 
@@ -447,7 +447,7 @@ final class WP_Secrets_Manager {
 
 		$result = $provider->exists( $key, $context );
 
-		WP_Secrets_Audit::log( 'exists', $key, $context );
+		Secrets_Audit::log( 'exists', $key, $context );
 
 		return $result;
 	}
@@ -461,7 +461,7 @@ final class WP_Secrets_Manager {
 	 */
 	public function list_keys( string $prefix = '', array $context = [] ): array {
 		if ( ! $this->check_access( $prefix ?: '*', 'list', $context ) ) {
-			do_action( 'wp_secrets_access_denied', $prefix, 'list', $context );
+			do_action( 'secrets_access_denied', $prefix, 'list', $context );
 			return array();
 		}
 
@@ -472,7 +472,7 @@ final class WP_Secrets_Manager {
 
 		$keys = $provider->list_keys( $prefix, $context );
 
-		WP_Secrets_Audit::log( 'list', $prefix ?: '*', $context );
+		Secrets_Audit::log( 'list', $prefix ?: '*', $context );
 
 		return $keys;
 	}

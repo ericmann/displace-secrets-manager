@@ -3,9 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * PHPUnit bootstrap file for WP Secrets Manager tests.
+ * PHPUnit bootstrap file for Secrets Manager tests.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 // Composer autoloader.
@@ -40,7 +40,7 @@ require_once "{$_tests_dir}/includes/functions.php";
  */
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Standard WP test bootstrap function.
 function _manually_load_plugin() {
-	require dirname( __DIR__ ) . '/wp-secrets-manager.php';
+	require dirname( __DIR__ ) . '/secrets-manager.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 

@@ -1,4 +1,4 @@
-=== WP Secrets Manager ===
+=== Secrets Manager ===
 Contributors: ericmann
 Tags: secrets, encryption, security, api-keys, credentials
 Requires at least: 6.9
@@ -12,9 +12,9 @@ A standardized secrets management API for WordPress. Provides get_secret() and s
 
 == Description ==
 
-Every WordPress plugin that connects to an external service stores API keys, tokens, and credentials in the `wp_options` table — in plaintext. There is no standard API for secrets management. WP Secrets Manager fixes this.
+Every WordPress plugin that connects to an external service stores API keys, tokens, and credentials in the `wp_options` table — in plaintext. There is no standard API for secrets management. Secrets Manager fixes this.
 
-**WP Secrets Manager** provides `get_secret()` and `set_secret()` — the missing secrets API for WordPress. All secrets are encrypted at rest using libsodium (XSalsa20-Poly1305). It works out of the box with zero configuration.
+**Secrets Manager** provides `get_secret()` and `set_secret()` — the missing secrets API for WordPress. All secrets are encrypted at rest using libsodium (XSalsa20-Poly1305). It works out of the box with zero configuration.
 
 = For Plugin Developers =
 
@@ -57,7 +57,7 @@ Generate one with `wp secret generate-key`.
 
 == Installation ==
 
-1. Upload the `wp-secrets-manager` directory to `/wp-content/plugins/`.
+1. Upload the `secrets-manager` directory to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. (Optional) Add a dedicated encryption key to `wp-config.php`:
 
@@ -92,7 +92,7 @@ Never. The admin page shows only key names, never values. The WP-CLI `get` comma
 
 = Can I use external backends like AWS KMS or HashiCorp Vault? =
 
-The provider interface is designed for this. Third-party provider plugins can register during the `wp_secrets_register_providers` action. First-party provider plugins are planned.
+The provider interface is designed for this. Third-party provider plugins can register during the `secrets_register_providers` action. First-party provider plugins are planned.
 
 == Changelog ==
 

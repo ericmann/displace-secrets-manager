@@ -3,9 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Tests for access control in WP_Secrets_Manager and WP_Secrets_Context.
+ * Tests for access control in Secrets_Manager and Secrets_Context.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  * @group access-control
  */
 
@@ -14,7 +14,7 @@ class Test_Access_Control extends WP_UnitTestCase {
 	/**
 	 * Manager instance used across tests.
 	 *
-	 * @var WP_Secrets_Manager
+	 * @var Secrets_Manager
 	 */
 	private $manager;
 
@@ -29,13 +29,13 @@ class Test_Access_Control extends WP_UnitTestCase {
 		parent::set_up();
 
 		$this->hook_calls = array();
-		$this->manager    = WP_Secrets_Manager::get_instance();
+		$this->manager    = Secrets_Manager::get_instance();
 	}
 
 	public function tear_down() {
-		remove_all_filters( 'wp_secrets_access' );
-		remove_all_actions( 'wp_secrets_access_denied' );
-		WP_Secrets_Manager::reset();
+		remove_all_filters( 'secrets_access' );
+		remove_all_actions( 'secrets_access_denied' );
+		Secrets_Manager::reset();
 		parent::tear_down();
 	}
 
@@ -98,7 +98,7 @@ class Test_Access_Control extends WP_UnitTestCase {
 		$user_id = self::factory()->user->create( array( 'role' => 'subscriber' ) );
 
 		add_filter(
-			'wp_secrets_access',
+			'secrets_access',
 			function ( $allowed, $key, $operation, $context ) {
 				if ( 'bar/secret' === $key && 'monitor' === $context['plugin'] ) {
 					return true;
@@ -122,7 +122,7 @@ class Test_Access_Control extends WP_UnitTestCase {
 
 	public function test_access_filter_can_deny() {
 		add_filter(
-			'wp_secrets_access',
+			'secrets_access',
 			function ( $allowed, $key, $operation, $context ) {
 				if ( 'restricted/secret' === $key ) {
 					return false;
@@ -147,7 +147,7 @@ class Test_Access_Control extends WP_UnitTestCase {
 		$user_id = self::factory()->user->create( array( 'role' => 'subscriber' ) );
 
 		add_action(
-			'wp_secrets_access_denied',
+			'secrets_access_denied',
 			function ( $key, $operation, $context ) {
 				$this->hook_calls['access_denied'] = array(
 					'key'       => $key,
@@ -159,7 +159,7 @@ class Test_Access_Control extends WP_UnitTestCase {
 			3
 		);
 
-		$mock_provider = $this->createMock( WP_Secrets_Provider::class );
+		$mock_provider = $this->createMock( Secrets_Provider::class );
 		$mock_provider->method( 'get_id' )->willReturn( 'mock' );
 		$mock_provider->method( 'is_available' )->willReturn( true );
 		$mock_provider->method( 'get_priority' )->willReturn( 10 );

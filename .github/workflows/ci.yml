@@ -116,7 +116,7 @@ jobs:
       - name: Copy coverage from container
         if: always()
         run: |
-          docker cp "$(docker ps -qf name=tests-cli)":/var/www/html/wp-content/plugins/wp-secrets-manager/coverage/clover.xml \
+          docker cp "$(docker ps -qf name=tests-cli)":/var/www/html/wp-content/plugins/secrets-manager/coverage/clover.xml \
             ./clover.xml 2>/dev/null || echo "No coverage file found"
 
       - name: Upload coverage artifact

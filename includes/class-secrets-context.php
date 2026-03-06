@@ -1,10 +1,10 @@
 <?php
 /**
- * WP Secrets Context
+ * Secrets Context
  *
  * Encapsulates caller context for access control decisions.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * additional metadata so providers and access-control filters
  * have the information they need.
  */
-final class WP_Secrets_Context {
+final class Secrets_Context {
 
 	/**
 	 * The calling plugin's slug, detected automatically or passed explicitly.
@@ -134,7 +134,7 @@ final class WP_Secrets_Context {
 	/**
 	 * Detect the calling plugin by walking the backtrace.
 	 *
-	 * Looks for the first file path outside wp-secrets-manager that
+	 * Looks for the first file path outside secrets-manager that
 	 * lives within wp-content/plugins/{slug}/.
 	 *
 	 * @return string The detected plugin slug, or 'unknown'.
@@ -150,7 +150,7 @@ final class WP_Secrets_Context {
 
 			$file = wp_normalize_path( $frame['file'] );
 
-			if ( false !== strpos( $file, 'wp-secrets-manager/' ) ) {
+			if ( false !== strpos( $file, 'secrets-manager/' ) ) {
 				continue;
 			}
 

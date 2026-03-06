@@ -1,11 +1,11 @@
 <?php
 /**
- * WP Secrets Public API Facade
+ * Secrets Public API Facade
  *
- * Static facade that delegates to the WP_Secrets_Manager orchestrator.
+ * Static facade that delegates to the Secrets_Manager orchestrator.
  * This is the primary API surface for plugin and theme developers.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Static facade providing the public secrets API.
  *
  * Usage:
- *   $key = WP_Secrets::get( 'my-plugin/api_key' );
- *   WP_Secrets::set( 'my-plugin/api_key', $value );
+ *   $key = Secrets::get( 'my-plugin/api_key' );
+ *   Secrets::set( 'my-plugin/api_key', $value );
  */
-final class WP_Secrets {
+final class Secrets {
 
 	/**
 	 * Retrieve a secret.
@@ -29,7 +29,7 @@ final class WP_Secrets {
 	 * @return string|null The decrypted/retrieved value, or null if not found.
 	 */
 	public static function get( string $key, array $context = [] ): ?string {
-		return WP_Secrets_Manager::get_instance()->get( $key, $context );
+		return Secrets_Manager::get_instance()->get( $key, $context );
 	}
 
 	/**
@@ -41,7 +41,7 @@ final class WP_Secrets {
 	 * @return bool True on success.
 	 */
 	public static function set( string $key, string $value, array $context = [] ): bool {
-		return WP_Secrets_Manager::get_instance()->set( $key, $value, $context );
+		return Secrets_Manager::get_instance()->set( $key, $value, $context );
 	}
 
 	/**
@@ -52,7 +52,7 @@ final class WP_Secrets {
 	 * @return bool True on success, false if not found.
 	 */
 	public static function delete( string $key, array $context = [] ): bool {
-		return WP_Secrets_Manager::get_instance()->delete( $key, $context );
+		return Secrets_Manager::get_instance()->delete( $key, $context );
 	}
 
 	/**
@@ -63,7 +63,7 @@ final class WP_Secrets {
 	 * @return bool
 	 */
 	public static function exists( string $key, array $context = [] ): bool {
-		return WP_Secrets_Manager::get_instance()->exists( $key, $context );
+		return Secrets_Manager::get_instance()->exists( $key, $context );
 	}
 
 	/**
@@ -74,6 +74,6 @@ final class WP_Secrets {
 	 * @return string[]
 	 */
 	public static function list_keys( string $prefix = '', array $context = [] ): array {
-		return WP_Secrets_Manager::get_instance()->list_keys( $prefix, $context );
+		return Secrets_Manager::get_instance()->list_keys( $prefix, $context );
 	}
 }

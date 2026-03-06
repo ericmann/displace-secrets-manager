@@ -3,12 +3,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 /**
- * Tests for the WP Secrets public API.
+ * Tests for the Secrets public API.
  *
- * Covers the WP_Secrets static facade, global helper functions,
+ * Covers the Secrets static facade, global helper functions,
  * key validation, hook integration, and provider resolution.
  *
- * @package WP_Secrets_Manager
+ * @package Secrets_Manager
  * @group   api
  */
 
@@ -41,10 +41,10 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
-		WP_Secrets_Manager::reset();
+		Secrets_Manager::reset();
 
-		$manager = WP_Secrets_Manager::get_instance();
-		$manager->register_provider( new WP_Secrets_Provider_Encrypted_Options() );
+		$manager = Secrets_Manager::get_instance();
+		$manager->register_provider( new Secrets_Provider_Encrypted_Options() );
 		$manager->select_provider();
 	}
 
@@ -53,7 +53,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		foreach ( $this->test_keys as $key ) {
-			$option = WP_Secrets_Provider_Encrypted_Options::option_name( $key );
+			$option = Secrets_Provider_Encrypted_Options::option_name( $key );
 			delete_option( $option );
 		}
 
@@ -64,7 +64,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$this->test_keys          = array();
 		$this->registered_filters = array();
 
-		WP_Secrets_Manager::reset();
+		Secrets_Manager::reset();
 
 		parent::tear_down();
 	}
@@ -91,14 +91,14 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	}
 
 	// ------------------------------------------------------------------
-	// 1–6. Basic CRUD via WP_Secrets facade
+	// 1–6. Basic CRUD via Secrets facade
 	// ------------------------------------------------------------------
 
 	/**
 	 * @group api
 	 */
 	public function test_get_returns_null_for_nonexistent_key() {
-		$result = WP_Secrets::get( 'test-plugin/nonexistent', $this->cli_context );
+		$result = Secrets::get( 'test-plugin/nonexistent', $this->cli_context );
 
 		$this->assertNull( $result );
 	}
@@ -112,8 +112,8 @@ class Secrets_API_Test extends WP_UnitTestCase {
 
 		$this->track_key( $key );
 
-		$set_result = WP_Secrets::set( $key, $value, $this->cli_context );
-		$got        = WP_Secrets::get( $key, $this->cli_context );
+		$set_result = Secrets::set( $key, $value, $this->cli_context );
+		$got        = Secrets::get( $key, $this->cli_context );
 
 		$this->assertTrue( $set_result );
 		$this->assertSame( $value, $got );
@@ -126,8 +126,8 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/to_delete';
 		$this->track_key( $key );
 
-		WP_Secrets::set( $key, 'temporary', $this->cli_context );
-		$result = WP_Secrets::delete( $key, $this->cli_context );
+		Secrets::set( $key, 'temporary', $this->cli_context );
+		$result = Secrets::delete( $key, $this->cli_context );
 
 		$this->assertTrue( $result );
 	}
@@ -136,7 +136,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	 * @group api
 	 */
 	public function test_delete_returns_false_for_nonexistent() {
-		$result = WP_Secrets::delete( 'test-plugin/never_existed', $this->cli_context );
+		$result = Secrets::delete( 'test-plugin/never_existed', $this->cli_context );
 
 		$this->assertFalse( $result );
 	}
@@ -148,16 +148,16 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/check_exists';
 		$this->track_key( $key );
 
-		WP_Secrets::set( $key, 'present', $this->cli_context );
+		Secrets::set( $key, 'present', $this->cli_context );
 
-		$this->assertTrue( WP_Secrets::exists( $key, $this->cli_context ) );
+		$this->assertTrue( Secrets::exists( $key, $this->cli_context ) );
 	}
 
 	/**
 	 * @group api
 	 */
 	public function test_exists_returns_false_for_nonexistent() {
-		$this->assertFalse( WP_Secrets::exists( 'test-plugin/ghost', $this->cli_context ) );
+		$this->assertFalse( Secrets::exists( 'test-plugin/ghost', $this->cli_context ) );
 	}
 
 	// ------------------------------------------------------------------
@@ -176,10 +176,10 @@ class Secrets_API_Test extends WP_UnitTestCase {
 
 		foreach ( $keys as $key ) {
 			$this->track_key( $key );
-			WP_Secrets::set( $key, 'val', $this->cli_context );
+			Secrets::set( $key, 'val', $this->cli_context );
 		}
 
-		$listed = WP_Secrets::list_keys( 'myapp/', $this->cli_context );
+		$listed = Secrets::list_keys( 'myapp/', $this->cli_context );
 
 		$this->assertContains( 'myapp/key_one', $listed );
 		$this->assertContains( 'myapp/key_two', $listed );
@@ -197,10 +197,10 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/helper_get';
 		$this->track_key( $key );
 
-		WP_Secrets::set( $key, 'via_static', $this->cli_context );
+		Secrets::set( $key, 'via_static', $this->cli_context );
 
 		$this->assertSame(
-			WP_Secrets::get( $key, $this->cli_context ),
+			Secrets::get( $key, $this->cli_context ),
 			get_secret( $key, $this->cli_context )
 		);
 	}
@@ -215,7 +215,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$result = set_secret( $key, 'helper_value', $this->cli_context );
 
 		$this->assertTrue( $result );
-		$this->assertSame( 'helper_value', WP_Secrets::get( $key, $this->cli_context ) );
+		$this->assertSame( 'helper_value', Secrets::get( $key, $this->cli_context ) );
 	}
 
 	/**
@@ -225,10 +225,10 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/helper_del';
 		$this->track_key( $key );
 
-		WP_Secrets::set( $key, 'doomed', $this->cli_context );
+		Secrets::set( $key, 'doomed', $this->cli_context );
 
 		$this->assertTrue( delete_secret( $key, $this->cli_context ) );
-		$this->assertNull( WP_Secrets::get( $key, $this->cli_context ) );
+		$this->assertNull( Secrets::get( $key, $this->cli_context ) );
 	}
 
 	/**
@@ -238,10 +238,10 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/helper_exists';
 		$this->track_key( $key );
 
-		WP_Secrets::set( $key, 'here', $this->cli_context );
+		Secrets::set( $key, 'here', $this->cli_context );
 
 		$this->assertSame(
-			WP_Secrets::exists( $key, $this->cli_context ),
+			Secrets::exists( $key, $this->cli_context ),
 			secret_exists( $key, $this->cli_context )
 		);
 	}
@@ -332,7 +332,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/pre_get';
 
 		$this->add_tracked_filter(
-			'wp_secrets_pre_get',
+			'secrets_pre_get',
 			function ( $value, $filter_key ) use ( $key ) {
 				if ( $key === $filter_key ) {
 					return 'short_circuited_value';
@@ -343,7 +343,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 			3
 		);
 
-		$result = WP_Secrets::get( $key, $this->cli_context );
+		$result = Secrets::get( $key, $this->cli_context );
 
 		$this->assertSame( 'short_circuited_value', $result );
 	}
@@ -356,7 +356,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$this->track_key( $key );
 
 		$this->add_tracked_filter(
-			'wp_secrets_pre_set',
+			'secrets_pre_set',
 			function ( $value, $filter_key ) use ( $key ) {
 				if ( $key === $filter_key ) {
 					return 'modified_' . $value;
@@ -367,8 +367,8 @@ class Secrets_API_Test extends WP_UnitTestCase {
 			3
 		);
 
-		WP_Secrets::set( $key, 'original', $this->cli_context );
-		$stored = WP_Secrets::get( $key, $this->cli_context );
+		Secrets::set( $key, 'original', $this->cli_context );
+		$stored = Secrets::get( $key, $this->cli_context );
 
 		$this->assertSame( 'modified_original', $stored );
 	}
@@ -384,11 +384,11 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/post_set';
 		$this->track_key( $key );
 
-		$before = did_action( 'wp_secrets_post_set' );
+		$before = did_action( 'secrets_post_set' );
 
-		WP_Secrets::set( $key, 'value', $this->cli_context );
+		Secrets::set( $key, 'value', $this->cli_context );
 
-		$this->assertSame( $before + 1, did_action( 'wp_secrets_post_set' ) );
+		$this->assertSame( $before + 1, did_action( 'secrets_post_set' ) );
 	}
 
 	/**
@@ -398,13 +398,13 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/post_del';
 		$this->track_key( $key );
 
-		WP_Secrets::set( $key, 'value', $this->cli_context );
+		Secrets::set( $key, 'value', $this->cli_context );
 
-		$before = did_action( 'wp_secrets_post_delete' );
+		$before = did_action( 'secrets_post_delete' );
 
-		WP_Secrets::delete( $key, $this->cli_context );
+		Secrets::delete( $key, $this->cli_context );
 
-		$this->assertSame( $before + 1, did_action( 'wp_secrets_post_delete' ) );
+		$this->assertSame( $before + 1, did_action( 'secrets_post_delete' ) );
 	}
 
 	// ------------------------------------------------------------------
@@ -418,13 +418,13 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/audit_get';
 		$this->track_key( $key );
 
-		WP_Secrets::set( $key, 'val', $this->cli_context );
+		Secrets::set( $key, 'val', $this->cli_context );
 
-		$before = did_action( 'wp_secrets_accessed' );
+		$before = did_action( 'secrets_accessed' );
 
-		WP_Secrets::get( $key, $this->cli_context );
+		Secrets::get( $key, $this->cli_context );
 
-		$this->assertGreaterThan( $before, did_action( 'wp_secrets_accessed' ) );
+		$this->assertGreaterThan( $before, did_action( 'secrets_accessed' ) );
 	}
 
 	/**
@@ -434,11 +434,11 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		$key = 'test-plugin/audit_set';
 		$this->track_key( $key );
 
-		$before = did_action( 'wp_secrets_accessed' );
+		$before = did_action( 'secrets_accessed' );
 
-		WP_Secrets::set( $key, 'val', $this->cli_context );
+		Secrets::set( $key, 'val', $this->cli_context );
 
-		$this->assertGreaterThan( $before, did_action( 'wp_secrets_accessed' ) );
+		$this->assertGreaterThan( $before, did_action( 'secrets_accessed' ) );
 	}
 
 	// ------------------------------------------------------------------
@@ -449,7 +449,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	 * @group api
 	 */
 	public function test_provider_filter_can_override() {
-		$mock_provider = $this->createMock( WP_Secrets_Provider::class );
+		$mock_provider = $this->createMock( Secrets_Provider::class );
 		$mock_provider->method( 'get_id' )->willReturn( 'mock-provider' );
 		$mock_provider->method( 'get_name' )->willReturn( 'Mock Provider' );
 		$mock_provider->method( 'get_priority' )->willReturn( 1 );
@@ -465,13 +465,13 @@ class Secrets_API_Test extends WP_UnitTestCase {
 			)
 		);
 
-		$manager = WP_Secrets_Manager::get_instance();
+		$manager = Secrets_Manager::get_instance();
 		$manager->register_provider( $mock_provider );
 
 		$key = 'routed/secret';
 
 		$this->add_tracked_filter(
-			'wp_secrets_provider',
+			'secrets_provider',
 			function ( $provider_id, $filter_key ) use ( $key ) {
 				if ( $key === $filter_key ) {
 					return 'mock-provider';
@@ -482,7 +482,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 			3
 		);
 
-		$result = WP_Secrets::get( $key, $this->cli_context );
+		$result = Secrets::get( $key, $this->cli_context );
 
 		$this->assertSame( 'from_mock', $result );
 	}
@@ -495,9 +495,9 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	 * @group api
 	 */
 	public function test_returns_null_when_no_provider() {
-		WP_Secrets_Manager::reset();
+		Secrets_Manager::reset();
 
-		$result = WP_Secrets::get( 'orphan/key', $this->cli_context );
+		$result = Secrets::get( 'orphan/key', $this->cli_context );
 
 		$this->assertNull( $result );
 	}
