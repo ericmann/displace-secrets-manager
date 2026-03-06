@@ -304,6 +304,7 @@ class WP_Secrets_Provider_Encrypted_Options implements WP_Secrets_Provider {
 			try {
 				$master_key = $this->decrypt( $stored, $previous_key, '__master_key__' );
 			} catch ( WP_Secrets_Exception $e ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a chained exception, not output.
 		throw new WP_Secrets_Exception(
 				esc_html__( 'Cannot decrypt master key with current or previous secrets key. Secrets are inaccessible.', 'wp-secrets-manager' ),
 				0,
@@ -375,6 +376,7 @@ class WP_Secrets_Provider_Encrypted_Options implements WP_Secrets_Provider {
 			$nonce      = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
 			$ciphertext = sodium_crypto_secretbox( $plaintext, $nonce, $encryption_key );
 		} catch ( \Exception $e ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a chained exception, not output.
 			throw new WP_Secrets_Exception(
 				esc_html__( 'Encryption failed.', 'wp-secrets-manager' ),
 				0,
@@ -428,6 +430,7 @@ class WP_Secrets_Provider_Encrypted_Options implements WP_Secrets_Provider {
 		try {
 			$plaintext = sodium_crypto_secretbox_open( $ciphertext, $nonce, $encryption_key );
 		} catch ( \SodiumException $e ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a chained exception, not output.
 			throw new WP_Secrets_Exception(
 				esc_html__( 'Decryption failed.', 'wp-secrets-manager' ),
 				0,
