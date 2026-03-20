@@ -5,7 +5,7 @@
  * Static facade that delegates to the Secrets_Manager orchestrator.
  * This is the primary API surface for plugin and theme developers.
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

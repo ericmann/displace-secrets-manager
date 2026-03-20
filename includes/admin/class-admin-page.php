@@ -7,7 +7,7 @@
  *
  * Secret values are NEVER displayed in the admin UI.
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,10 +31,10 @@ class Secrets_Admin_Page {
 	 */
 	public function register_page(): void {
 		add_management_page(
-			__( 'Secrets Manager', 'secrets-manager' ),
-			__( 'Secrets', 'secrets-manager' ),
+			__( 'Displace Secrets Manager', 'displace-secrets-manager' ),
+			__( 'Secrets', 'displace-secrets-manager' ),
 			'manage_options',
-			'secrets-manager',
+			'displace-secrets-manager',
 			array( $this, 'render_page' )
 		);
 	}
@@ -44,7 +44,7 @@ class Secrets_Admin_Page {
 	 */
 	public function render_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'secrets-manager' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'displace-secrets-manager' ) );
 		}
 
 		$manager   = Secrets_Manager::get_instance();
@@ -66,18 +66,18 @@ class Secrets_Admin_Page {
 		do_action( 'secrets_admin_page_before', $providers, $active_id );
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Secrets Manager', 'secrets-manager' ); ?></h1>
+			<h1><?php esc_html_e( 'Displace Secrets Manager', 'displace-secrets-manager' ); ?></h1>
 
-			<h2><?php esc_html_e( 'Active Provider', 'secrets-manager' ); ?></h2>
+			<h2><?php esc_html_e( 'Active Provider', 'displace-secrets-manager' ); ?></h2>
 			<?php if ( $active_provider ) : ?>
 				<table class="widefat striped">
 					<tbody>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Provider', 'secrets-manager' ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Provider', 'displace-secrets-manager' ); ?></th>
 							<td><?php echo esc_html( $active_provider->get_name() ); ?> (<code><?php echo esc_html( $active_provider->get_id() ); ?></code>)</td>
 						</tr>
 						<tr>
-							<th scope="row"><?php esc_html_e( 'Status', 'secrets-manager' ); ?></th>
+							<th scope="row"><?php esc_html_e( 'Status', 'displace-secrets-manager' ); ?></th>
 							<td>
 								<?php
 								$health = $active_provider->health_check();
@@ -93,14 +93,14 @@ class Secrets_Admin_Page {
 						</tr>
 						<?php if ( $active_provider instanceof Secrets_Provider_Encrypted_Options ) : ?>
 							<tr>
-								<th scope="row"><?php esc_html_e( 'Key Source', 'secrets-manager' ); ?></th>
+								<th scope="row"><?php esc_html_e( 'Key Source', 'displace-secrets-manager' ); ?></th>
 								<td>
 									<?php
 									$key_source = $active_provider->get_key_source();
 									if ( Secrets_Provider_Encrypted_Options::KEY_SOURCE_CONSTANT === $key_source ) {
-										esc_html_e( 'Dedicated WP_SECRETS_KEY constant', 'secrets-manager' );
+										esc_html_e( 'Dedicated WP_SECRETS_KEY constant', 'displace-secrets-manager' );
 									} else {
-										esc_html_e( 'Derived from WordPress salts (LOGGED_IN_KEY + LOGGED_IN_SALT)', 'secrets-manager' );
+										esc_html_e( 'Derived from WordPress salts (LOGGED_IN_KEY + LOGGED_IN_SALT)', 'displace-secrets-manager' );
 									}
 									?>
 								</td>
@@ -110,20 +110,20 @@ class Secrets_Admin_Page {
 				</table>
 			<?php else : ?>
 				<div class="notice notice-error">
-					<p><?php esc_html_e( 'No secrets provider is active. Sodium functions may not be available.', 'secrets-manager' ); ?></p>
+					<p><?php esc_html_e( 'No secrets provider is active. Sodium functions may not be available.', 'displace-secrets-manager' ); ?></p>
 				</div>
 			<?php endif; ?>
 
 			<?php if ( count( $providers ) > 1 ) : ?>
-				<h2><?php esc_html_e( 'Registered Providers', 'secrets-manager' ); ?></h2>
+				<h2><?php esc_html_e( 'Registered Providers', 'displace-secrets-manager' ); ?></h2>
 				<table class="widefat striped">
 					<thead>
 						<tr>
-							<th><?php esc_html_e( 'Provider', 'secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'ID', 'secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'Priority', 'secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'Available', 'secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'Active', 'secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Provider', 'displace-secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'ID', 'displace-secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Priority', 'displace-secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Available', 'displace-secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Active', 'displace-secrets-manager' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -133,23 +133,23 @@ class Secrets_Admin_Page {
 								<td><code><?php echo esc_html( $provider->get_id() ); ?></code></td>
 								<td><?php echo esc_html( $provider->get_priority() ); ?></td>
 								<td><?php echo $provider->is_available() ? '&#9989;' : '&#10060;'; ?></td>
-								<td><?php echo $provider->get_id() === $active_id ? '<strong>' . esc_html__( 'Active', 'secrets-manager' ) . '</strong>' : '—'; ?></td>
+								<td><?php echo $provider->get_id() === $active_id ? '<strong>' . esc_html__( 'Active', 'displace-secrets-manager' ) . '</strong>' : '—'; ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
 				</table>
 			<?php endif; ?>
 
-			<h2><?php esc_html_e( 'Stored Secrets', 'secrets-manager' ); ?></h2>
+			<h2><?php esc_html_e( 'Stored Secrets', 'displace-secrets-manager' ); ?></h2>
 			<?php if ( empty( $keys ) ) : ?>
-				<p><?php esc_html_e( 'No secrets stored yet.', 'secrets-manager' ); ?></p>
+				<p><?php esc_html_e( 'No secrets stored yet.', 'displace-secrets-manager' ); ?></p>
 			<?php else : ?>
-				<p class="description"><?php esc_html_e( 'Only secret key names are displayed. Values are never shown in the admin interface.', 'secrets-manager' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Only secret key names are displayed. Values are never shown in the admin interface.', 'displace-secrets-manager' ); ?></p>
 				<table class="widefat striped">
 					<thead>
 						<tr>
-							<th><?php esc_html_e( 'Key', 'secrets-manager' ); ?></th>
-							<th><?php esc_html_e( 'Namespace', 'secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Key', 'displace-secrets-manager' ); ?></th>
+							<th><?php esc_html_e( 'Namespace', 'displace-secrets-manager' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -159,7 +159,7 @@ class Secrets_Admin_Page {
 								<td>
 									<?php
 									$ns = strstr( $key, '/', true );
-									echo esc_html( $ns ?: __( '(global)', 'secrets-manager' ) );
+									echo esc_html( $ns ?: __( '(global)', 'displace-secrets-manager' ) );
 									?>
 								</td>
 							</tr>
@@ -168,12 +168,12 @@ class Secrets_Admin_Page {
 				</table>
 			<?php endif; ?>
 
-			<h2><?php esc_html_e( 'WP-CLI', 'secrets-manager' ); ?></h2>
+			<h2><?php esc_html_e( 'WP-CLI', 'displace-secrets-manager' ); ?></h2>
 			<p>
 				<?php
 				printf(
 					/* translators: 1: wp secret command, 2: wp help secret command */
-					esc_html__( 'Manage secrets from the command line with %1$s. Run %2$s for full documentation.', 'secrets-manager' ),
+					esc_html__( 'Manage secrets from the command line with %1$s. Run %2$s for full documentation.', 'displace-secrets-manager' ),
 					'<code>wp secret</code>',
 					'<code>wp help secret</code>'
 				);

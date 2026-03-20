@@ -8,7 +8,7 @@
  *
  * Secret values are NEVER passed through these hooks.
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

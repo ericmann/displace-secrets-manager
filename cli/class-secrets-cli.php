@@ -1,11 +1,11 @@
 <?php
 /**
- * WP-CLI Commands for Secrets Manager
+ * WP-CLI Commands for Displace Secrets Manager
  *
  * Provides the `wp secret` command family for managing secrets
  * from the command line.
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! class_exists( 'WP_CLI_Command' ) ) {
 }
 
 /**
- * Manage secrets stored by Secrets Manager.
+ * Manage secrets stored by Displace Secrets Manager.
  *
  * ## EXAMPLES
  *

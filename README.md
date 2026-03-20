@@ -1,4 +1,4 @@
-# Secrets Manager
+# Displace Secrets Manager
 
 A standardized secrets management API for WordPress. Provides `get_secret()` and `set_secret()` — the missing secrets API that WordPress has always needed. All secrets are encrypted at rest. Always.
 
@@ -6,7 +6,7 @@ A standardized secrets management API for WordPress. Provides `get_secret()` and
 
 Every WordPress plugin that connects to an external service stores API keys, tokens, and credentials in the `wp_options` table — in plaintext. There is no standard API for secrets management. Google Site Kit, WooCommerce, Mailchimp, Yoast, and hundreds of other plugins each reinvent their own (usually insecure) approach.
 
-**Secrets Manager** solves this by providing a single, extensible API where encryption is the only option.
+**Displace Secrets Manager** solves this by providing a single, extensible API where encryption is the only option.
 
 ## Quick Start
 
@@ -51,7 +51,7 @@ define( 'WP_SECRETS_KEY', getenv( 'MY_SECRETS_KEY' ) );
 
 ### Architecture
 
-Secrets Manager uses a three-layer architecture:
+Displace Secrets Manager uses a three-layer architecture:
 
 1. **Consumer Layer** — Global functions (`get_secret()`, `set_secret()`) and WP-CLI commands.
 2. **SDK / Public API** — The `Secrets` class that enforces access control, validates keys, fires audit hooks, and delegates to the active provider.
@@ -87,7 +87,7 @@ define( 'WP_SECRETS_PROVIDER', 'aws-kms' );
 
 ## Key Rotation
 
-Secrets Manager supports seamless key rotation via `WP_SECRETS_KEY_PREVIOUS`:
+Displace Secrets Manager supports seamless key rotation via `WP_SECRETS_KEY_PREVIOUS`:
 
 1. Set `WP_SECRETS_KEY_PREVIOUS` to your current key.
 2. Set `WP_SECRETS_KEY` to your new key.
@@ -208,11 +208,11 @@ Third-party providers implement the `Secrets_Provider` interface and register du
 <?php
 /**
  * Plugin Name: Secrets — AWS KMS Provider
- * Requires Plugins: secrets-manager
+ * Requires Plugins: displace-secrets-manager
  */
 
 add_action( 'secrets_register_providers', function() {
-    secrets_register_provider( new My_KMS_Provider() );
+    displace_secrets_register_provider( new My_KMS_Provider() );
 });
 
 class My_KMS_Provider implements Secrets_Provider {
@@ -238,7 +238,7 @@ class My_KMS_Provider implements Secrets_Provider {
 }
 ```
 
-## Adopting Secrets Manager in Your Plugin
+## Adopting Displace Secrets Manager in Your Plugin
 
 Support both secrets-managed and traditional sites:
 
@@ -265,7 +265,7 @@ function my_plugin_set_api_key( string $value ): void {
 
 ## Site Health Integration
 
-Secrets Manager adds checks to Tools > Site Health:
+Displace Secrets Manager adds checks to Tools > Site Health:
 
 - **Recommended** — Using key derived from WordPress salts; suggests defining `WP_SECRETS_KEY`
 - **Good** — Encrypted provider active with dedicated key

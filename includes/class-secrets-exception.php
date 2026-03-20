@@ -2,7 +2,7 @@
 /**
  * Secrets Exception
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

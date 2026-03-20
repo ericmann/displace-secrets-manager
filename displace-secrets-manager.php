@@ -1,40 +1,40 @@
 <?php
 /**
- * Plugin Name: Secrets Manager
- * Plugin URI:  https://github.com/ericmann/secrets-manager
+ * Plugin Name: Displace Secrets Manager
+ * Plugin URI:  https://github.com/ericmann/displace-secrets-manager
  * Description: A standardized secrets management API for WordPress. Provides get_secret() and set_secret() with automatic encryption and a pluggable provider interface for external backends.
  * Version:     0.1.0
  * Author:      Eric Mann
  * Author URI:  https://eamann.com
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: secrets-manager
+ * Text Domain: displace-secrets-manager
  * Requires at least: 6.9
  * Requires PHP: 7.2
  *
  * Copyright (c) 2026 Eric Mann
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SECRETS_MANAGER_VERSION', '0.1.0' );
-define( 'SECRETS_MANAGER_FILE', __FILE__ );
-define( 'SECRETS_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
-define( 'SECRETS_MANAGER_URL', plugin_dir_url( __FILE__ ) );
+define( 'DISPLACE_SECRETS_MANAGER_VERSION', '0.1.0' );
+define( 'DISPLACE_SECRETS_MANAGER_FILE', __FILE__ );
+define( 'DISPLACE_SECRETS_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
+define( 'DISPLACE_SECRETS_MANAGER_URL', plugin_dir_url( __FILE__ ) );
 
-require_once SECRETS_MANAGER_DIR . 'includes/class-secrets-exception.php';
-require_once SECRETS_MANAGER_DIR . 'includes/interface-secrets-provider.php';
-require_once SECRETS_MANAGER_DIR . 'includes/class-secrets-context.php';
-require_once SECRETS_MANAGER_DIR . 'includes/class-secrets-audit.php';
-require_once SECRETS_MANAGER_DIR . 'includes/class-secrets-manager.php';
-require_once SECRETS_MANAGER_DIR . 'includes/class-secrets.php';
-require_once SECRETS_MANAGER_DIR . 'includes/providers/class-secrets-provider-encrypted-options.php';
-require_once SECRETS_MANAGER_DIR . 'includes/admin/class-admin-page.php';
-require_once SECRETS_MANAGER_DIR . 'includes/admin/class-health-check.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/class-secrets-exception.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/interface-secrets-provider.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/class-secrets-context.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/class-secrets-audit.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/class-secrets-manager.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/class-secrets.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/providers/class-secrets-provider-encrypted-options.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/admin/class-admin-page.php';
+require_once DISPLACE_SECRETS_MANAGER_DIR . 'includes/admin/class-health-check.php';
 
 /**
  * Retrieve a secret value.
@@ -91,7 +91,7 @@ function secret_exists( string $key, array $context = [] ): bool {
  * @param Secrets_Provider $provider The provider instance.
  * @return bool True if registered successfully.
  */
-function secrets_register_provider( Secrets_Provider $provider ): bool {
+function displace_secrets_register_provider( Secrets_Provider $provider ): bool {
 	return Secrets_Manager::get_instance()->register_provider( $provider );
 }
 
@@ -99,7 +99,7 @@ function secrets_register_provider( Secrets_Provider $provider ): bool {
  * Bootstrap the plugin on the `plugins_loaded` hook to allow
  * other plugins to register providers during init.
  */
-function secrets_manager_init() {
+function displace_secrets_manager_init() {
 	$manager = Secrets_Manager::get_instance();
 	$manager->register_provider( new Secrets_Provider_Encrypted_Options() );
 
@@ -118,8 +118,8 @@ function secrets_manager_init() {
 
 	new Secrets_Health_Check();
 }
-add_action( 'plugins_loaded', 'secrets_manager_init' );
+add_action( 'plugins_loaded', 'displace_secrets_manager_init' );
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once SECRETS_MANAGER_DIR . 'cli/class-secrets-cli.php';
+	require_once DISPLACE_SECRETS_MANAGER_DIR . 'cli/class-secrets-cli.php';
 }

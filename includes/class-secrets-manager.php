@@ -1,11 +1,11 @@
 <?php
 /**
- * Secrets Manager Orchestrator
+ * Displace Secrets Manager Orchestrator
  *
  * Central coordinator that manages provider registration, selection,
  * access control, and delegates operations to the active provider.
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,7 +70,7 @@ final class Secrets_Manager {
 				__METHOD__,
 				sprintf(
 					/* translators: %s: provider ID */
-					esc_html__( 'A secrets provider with ID "%s" is already registered.', 'secrets-manager' ),
+					esc_html__( 'A secrets provider with ID "%s" is already registered.', 'displace-secrets-manager' ),
 					esc_html( $id )
 				),
 				'0.1.0'
@@ -219,7 +219,7 @@ final class Secrets_Manager {
 		if ( '' === $key ) {
 			return new \WP_Error(
 				'secrets_empty_key',
-				__( 'Secret key must not be empty.', 'secrets-manager' )
+				__( 'Secret key must not be empty.', 'displace-secrets-manager' )
 			);
 		}
 
@@ -230,7 +230,7 @@ final class Secrets_Manager {
 				'secrets_invalid_key',
 				sprintf(
 					/* translators: %s: the invalid key */
-					__( 'Secret key "%s" must be namespaced with a forward slash (e.g. "my-plugin/api_key"). Use the --global flag for unnamespaced keys.', 'secrets-manager' ),
+					__( 'Secret key "%s" must be namespaced with a forward slash (e.g. "my-plugin/api_key"). Use the --global flag for unnamespaced keys.', 'displace-secrets-manager' ),
 					$key
 				)
 			);
@@ -239,7 +239,7 @@ final class Secrets_Manager {
 		if ( preg_match( '/[^a-zA-Z0-9\/_\-\.]/', $key ) ) {
 			return new \WP_Error(
 				'secrets_invalid_characters',
-				__( 'Secret key contains invalid characters. Use only alphanumeric characters, forward slashes, underscores, hyphens, and periods.', 'secrets-manager' )
+				__( 'Secret key contains invalid characters. Use only alphanumeric characters, forward slashes, underscores, hyphens, and periods.', 'displace-secrets-manager' )
 			);
 		}
 

@@ -4,9 +4,9 @@
  *
  * All secrets backends must implement this interface. Providers are
  * registered via the `secrets_register_providers` action or by
- * calling secrets_register_provider() directly.
+ * calling displace_secrets_register_provider() directly.
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -20,7 +20,7 @@
  * automatically retries with the previous key, then re-encrypts the
  * master key under the new key.
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -84,7 +84,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 	 * {@inheritDoc}
 	 */
 	public function get_name(): string {
-		return __( 'Encrypted Options', 'secrets-manager' );
+		return __( 'Encrypted Options', 'displace-secrets-manager' );
 	}
 
 	/**
@@ -183,7 +183,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 		if ( ! function_exists( 'sodium_crypto_secretbox' ) ) {
 			return array(
 				'status'  => 'critical',
-				'message' => __( 'Sodium functions are not available. Secrets cannot be encrypted.', 'secrets-manager' ),
+				'message' => __( 'Sodium functions are not available. Secrets cannot be encrypted.', 'displace-secrets-manager' ),
 			);
 		}
 
@@ -199,7 +199,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 			if ( $test_plaintext !== $decrypted ) {
 				return array(
 					'status'  => 'critical',
-					'message' => __( 'Encryption round-trip failed. The master key or secrets key may be corrupted.', 'secrets-manager' ),
+					'message' => __( 'Encryption round-trip failed. The master key or secrets key may be corrupted.', 'displace-secrets-manager' ),
 				);
 			}
 		} catch ( Secrets_Exception $e ) {
@@ -212,13 +212,13 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 		if ( self::KEY_SOURCE_FALLBACK === $source ) {
 			return array(
 				'status'  => 'recommended',
-				'message' => __( 'Encryption active using key derived from WordPress salts. Define a dedicated WP_SECRETS_KEY in wp-config.php for independent key management.', 'secrets-manager' ),
+				'message' => __( 'Encryption active using key derived from WordPress salts. Define a dedicated WP_SECRETS_KEY in wp-config.php for independent key management.', 'displace-secrets-manager' ),
 			);
 		}
 
 		return array(
 			'status'  => 'good',
-			'message' => __( 'Encryption active with dedicated WP_SECRETS_KEY.', 'secrets-manager' ),
+			'message' => __( 'Encryption active with dedicated WP_SECRETS_KEY.', 'displace-secrets-manager' ),
 		);
 	}
 
@@ -305,7 +305,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 				$master_key = $this->decrypt( $stored, $previous_key, '__master_key__' );
 			} catch ( Secrets_Exception $e ) {
 				throw new Secrets_Exception(
-				esc_html__( 'Cannot decrypt master key with current or previous secrets key. Secrets are inaccessible.', 'secrets-manager' ),
+				esc_html__( 'Cannot decrypt master key with current or previous secrets key. Secrets are inaccessible.', 'displace-secrets-manager' ),
 				0,
 				$e, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- chained exception, not output.
 				sanitize_key( '__master_key__' ),
@@ -328,7 +328,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 		}
 
 		throw new Secrets_Exception(
-			esc_html__( 'Cannot decrypt master key. If you recently changed WP_SECRETS_KEY, set WP_SECRETS_KEY_PREVIOUS to the old value.', 'secrets-manager' ),
+			esc_html__( 'Cannot decrypt master key. If you recently changed WP_SECRETS_KEY, set WP_SECRETS_KEY_PREVIOUS to the old value.', 'displace-secrets-manager' ),
 			0,
 			null,
 			sanitize_key( '__master_key__' ),
@@ -376,7 +376,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 			$ciphertext = sodium_crypto_secretbox( $plaintext, $nonce, $encryption_key );
 		} catch ( \Exception $e ) {
 			throw new Secrets_Exception(
-				esc_html__( 'Encryption failed.', 'secrets-manager' ),
+				esc_html__( 'Encryption failed.', 'displace-secrets-manager' ),
 				0,
 				$e, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- chained exception, not output.
 				sanitize_key( $context_key ),
@@ -403,7 +403,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 		$decoded = base64_decode( $stored, true );
 		if ( false === $decoded ) {
 			throw new Secrets_Exception(
-				esc_html__( 'Invalid stored ciphertext (base64 decode failed).', 'secrets-manager' ),
+				esc_html__( 'Invalid stored ciphertext (base64 decode failed).', 'displace-secrets-manager' ),
 				0,
 				null,
 				sanitize_key( $context_key ),
@@ -414,7 +414,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 		$min_length = SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + SODIUM_CRYPTO_SECRETBOX_MACBYTES;
 		if ( strlen( $decoded ) < $min_length ) {
 			throw new Secrets_Exception(
-				esc_html__( 'Stored ciphertext is too short to contain a valid nonce and payload.', 'secrets-manager' ),
+				esc_html__( 'Stored ciphertext is too short to contain a valid nonce and payload.', 'displace-secrets-manager' ),
 				0,
 				null,
 				sanitize_key( $context_key ),
@@ -429,7 +429,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 			$plaintext = sodium_crypto_secretbox_open( $ciphertext, $nonce, $encryption_key );
 		} catch ( \SodiumException $e ) {
 			throw new Secrets_Exception(
-				esc_html__( 'Decryption failed.', 'secrets-manager' ),
+				esc_html__( 'Decryption failed.', 'displace-secrets-manager' ),
 				0,
 				$e, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- chained exception, not output.
 				sanitize_key( $context_key ),
@@ -439,7 +439,7 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 
 		if ( false === $plaintext ) {
 			throw new Secrets_Exception(
-				esc_html__( 'Decryption failed. The key may have changed or the data is corrupt.', 'secrets-manager' ),
+				esc_html__( 'Decryption failed. The key may have changed or the data is corrupt.', 'displace-secrets-manager' ),
 				0,
 				null,
 				sanitize_key( $context_key ),

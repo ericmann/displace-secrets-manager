@@ -4,7 +4,7 @@
  *
  * Encapsulates caller context for access control decisions.
  *
- * @package Secrets_Manager
+ * @package Displace_Secrets_Manager
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -134,7 +134,7 @@ final class Secrets_Context {
 	/**
 	 * Detect the calling plugin by walking the backtrace.
 	 *
-	 * Looks for the first file path outside secrets-manager that
+	 * Looks for the first file path outside displace-secrets-manager that
 	 * lives within wp-content/plugins/{slug}/.
 	 *
 	 * @return string The detected plugin slug, or 'unknown'.
@@ -150,7 +150,7 @@ final class Secrets_Context {
 
 			$file = wp_normalize_path( $frame['file'] );
 
-			if ( false !== strpos( $file, 'secrets-manager/' ) ) {
+			if ( false !== strpos( $file, 'displace-secrets-manager/' ) ) {
 				continue;
 			}
 

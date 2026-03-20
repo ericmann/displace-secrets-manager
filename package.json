@@ -1,14 +1,14 @@
 {
-	"name": "secrets-manager",
+	"name": "displace-secrets-manager",
 	"private": true,
 	"engines": {
 		"node": ">=18"
 	},
 	"scripts": {
 		"env": "wp-env",
-		"composer": "wp-env run tests-cli --env-cwd=wp-content/plugins/secrets-manager composer --",
+		"composer": "wp-env run tests-cli --env-cwd=wp-content/plugins/displace-secrets-manager composer --",
 		"test": "npm run composer test",
-		"test:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/secrets-manager vendor/bin/phpunit -- --coverage-text --coverage-html=coverage/html"
+		"test:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/displace-secrets-manager vendor/bin/phpunit -- --coverage-text --coverage-html=coverage/html"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^10.30.0"

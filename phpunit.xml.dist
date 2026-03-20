@@ -9,7 +9,7 @@
 	beStrictAboutTestsThatDoNotTestAnything="true"
 >
 	<testsuites>
-		<testsuite name="Secrets Manager">
+		<testsuite name="Displace Secrets Manager">
 			<directory prefix="test-" suffix=".php">./tests/phpunit/</directory>
 		</testsuite>
 	</testsuites>
@@ -18,7 +18,7 @@
 		<whitelist>
 			<directory suffix=".php">./includes</directory>
 			<directory suffix=".php">./cli</directory>
-			<file>./secrets-manager.php</file>
+			<file>./displace-secrets-manager.php</file>
 		</whitelist>
 	</filter>
 </phpunit>
