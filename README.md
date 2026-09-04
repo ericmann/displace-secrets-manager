@@ -1,3 +1,57 @@
+> [!IMPORTANT]
+> ## Deprecated — superseded by the Secrets API feature plugin
+>
+> **This repository is archived and no longer maintained.** Development continues at
+> **[ericmann/secrets-api](https://github.com/ericmann/secrets-api)**, which implements the
+> [Secrets API proposed for WordPress 7.2](https://make.wordpress.org/core/2026/08/25/proposal-a-secrets-api-for-wordpress-7-2/)
+> and is written to be merged into core.
+>
+> This project was a prototype. It proved the idea was worth doing and shaped the proposal, but its
+> API is not the one going into WordPress.
+>
+> ### Switching is not a drop-in swap — budget real work for it
+>
+> The replacement deliberately ships no compatibility shim. Nothing here keeps working unchanged:
+>
+> - **Every function is renamed and re-shaped.** `get_secret()` → `wp_get_secret()`,
+>   `set_secret()` → `wp_set_secret()`, `delete_secret()` → `wp_delete_secret()`. There is no
+>   `secret_exists()`. The `$context` array parameter has no equivalent.
+> - **The return contract changed, and this is the one that will bite you.** `get_secret()`
+>   returned `?string`, collapsing "no such secret" and "could not decrypt it" into the same
+>   `null`. `wp_get_secret()` returns a `WP_Secret`, `null` only when the secret genuinely does not
+>   exist, or a `WP_Error` when it exists and could not be produced. Call `->reveal()` for the
+>   value and check `is_wp_error()`. Porting a call site that treated `null` as "not set" without
+>   handling `WP_Error` is how a working credential gets regenerated during an outage.
+> - **Exceptions are gone.** The new API returns `WP_Error` and never throws.
+> - **No admin screen.** The proposal defers UI to 7.3.
+> - **No per-plugin isolation, and there never really was.** Namespacing groups secrets by owner;
+>   it is not an access-control boundary. The new project's documentation states this plainly
+>   rather than implying otherwise.
+>
+> ### Your stored secrets are readable, but check which case you are in
+>
+> The new plugin reads this plugin's on-disk format, including records sealed under
+> `WP_SECRETS_KEY`, under `WP_SECRETS_KEY_PREVIOUS`, or under the
+> `LOGGED_IN_KEY`/`LOGGED_IN_SALT` fallback.
+>
+> - **Unnamespaced keys** (`api_key`) upgrade automatically. The first `wp_get_secret( 'api_key' )`
+>   decrypts the old row, rewrites it in the new format, flags it as needing rotation, and leaves
+>   the old row untouched.
+> - **Namespaced keys** (`my-plugin/api_key`, which this plugin's own docs recommended) **do not
+>   upgrade automatically.** `wp_get_secret( 'my-plugin/api_key' )` returns `null`, which is
+>   indistinguishable from never having set it. Run **`wp secret migrate-legacy`** for these —
+>   it handles them correctly, and `--dry-run` shows you what it would do first.
+>
+> **This plugin's option rows are never modified or deleted** by the new one, so both can run on
+> the same site while you port. Cleaning up afterwards is a manual `wp option delete`.
+>
+> Start with the new project's [README](https://github.com/ericmann/secrets-api#readme) and its
+> [migration notes](https://github.com/ericmann/secrets-api/blob/main/docs/migrating-from-displace.md).
+> Security issues belong in the new repository's
+> [private advisory form](https://github.com/ericmann/secrets-api/security/advisories/new).
+
+---
+
 # Displace Secrets Manager
 
 A standardized secrets management API for WordPress. Provides `get_secret()` and `set_secret()` — the missing secrets API that WordPress has always needed. All secrets are encrypted at rest. Always.

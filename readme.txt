@@ -12,6 +12,14 @@ A standardized secrets management API for WordPress. Provides get_secret() and s
 
 == Description ==
 
+**DEPRECATED. This plugin is no longer maintained.**
+
+Development continues as the Secrets API feature plugin, which implements the Secrets API proposed for WordPress 7.2 and is written to be merged into core: https://github.com/ericmann/secrets-api
+
+Switching is not a drop-in swap. Every function is renamed (`get_secret()` becomes `wp_get_secret()`), and the return contract changed: `wp_get_secret()` returns a WP_Secret object, null only when the secret does not exist, or a WP_Error when it exists but could not be decrypted. Code that treated a null return as "not set" needs updating.
+
+Existing encrypted secrets remain readable. Unnamespaced keys upgrade to the new format on first read. Namespaced keys such as `my-plugin/api_key`, which this plugin's examples used, do NOT upgrade automatically and need `wp secret migrate-legacy`. This plugin's stored data is never modified or deleted by the new plugin, so both can run while you port.
+
 Every WordPress plugin that connects to an external service stores API keys, tokens, and credentials in the `wp_options` table — in plaintext. There is no standard API for secrets management. Displace Secrets Manager fixes this.
 
 **Displace Secrets Manager** provides `get_secret()` and `set_secret()` — the missing secrets API for WordPress. All secrets are encrypted at rest using libsodium (XSalsa20-Poly1305). It works out of the box with zero configuration.
